@@ -1,0 +1,29 @@
+body {
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+
+    font-family: 'Inter', sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+html, body {
+    	height: 100%;
+		margin: 0;
+		padding: 0;
+}
+
+.section {
+    padding-bottom: 3rem;
+}
