@@ -33,7 +33,7 @@
 	.header {
 		display: flex;
 		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.411);
-		max-height: 8rem;
+		max-height: 7rem;
 		padding: 1rem;
 		z-index: 10;
 		flex-shrink: 0;
@@ -64,8 +64,7 @@
 	}
 
 	.list__item--nav {
-		padding-left: 1rem;
-		padding-right: 1rem;
+		padding: 0.25rem 1rem;
 	}
 
 	.active {
@@ -82,11 +81,13 @@
 	.main {
 		flex: 1;
 		overflow: auto;
+		background-color: whitesmoke;
+		padding: 1rem;
 	}
 
 	.logo {
-		width: 6rem;
-		height: 6rem;
+		width: 4rem;
+		height: 4rem;
 		margin-right: 1rem;
 	}
 </style>
