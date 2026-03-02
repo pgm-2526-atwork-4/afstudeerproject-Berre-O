@@ -48,7 +48,7 @@
                     <div class="icon icon--active"><span>⏻</span> Actief</div>
                 </td>
                 <td class="table__item">0879867756464554</td>
-                <td class="table__item"><a href="search/1">></a></td>
+                <td class="table__item"><a href="search/1" data-sveltekit-preload-data>></a></td>
             </tr>
             <tr class="table__row">
                 <td class="table__item">TestRestaurant</td>

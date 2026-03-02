@@ -1,63 +1,62 @@
-@import url('./_variables.css');
+@import url("./_variables.css");
+
+html,
+body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
 
 body {
-    width: 100vw;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-
-    font-family: 'Inter', sans-serif;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  font-family: "Inter", sans-serif;
 }
 
 a {
-    text-decoration: none;
-    color: black;
+  text-decoration: none;
+  color: black;
 }
 
 ul {
-    list-style: none;
-    padding: 0;
-}
-
-html, body {
-    	height: 100%;
-		margin: 0;
-		padding: 0;
+  list-style: none;
+  padding: 0;
 }
 
 .section {
-    padding-bottom: 3rem;
+  padding-bottom: 3rem;
 }
 
 .icon--active {
-    color: lightgreen;
+  color: lightgreen;
 }
 
 .icon--inactive {
-    color: red;
+  color: red;
 }
 
 .state--green {
-    &::before {
-        content: '';
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        background-color: lightgreen;
-        border-radius: 50%;
-        margin-right: 5px;
-    }
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: lightgreen;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
 }
 
 .state--yellow {
-    &::before {
-        content: '';
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        background-color: yellow;
-        border-radius: 50%;
-        margin-right: 5px;
-    }
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: yellow;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
 }

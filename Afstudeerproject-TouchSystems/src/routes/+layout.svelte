@@ -19,10 +19,10 @@
 		<nav class="nav">
 			<ul class="list list--nav">
 				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/dashboard"}>
-					<a href="/dashboard"><i class="fa-regular fa-house"></i>Dashboard</a></li>
-				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/search"}><a href="/search">Search</a></li>
-				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/statistics"}><a href="/statistics"><i class="fa-solid fa-chart-line"></i>Statistics</a></li>
-				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/logs"}><a href="/logs">Logs</a></li>
+					<a href="/dashboard" class="link link--nav"><i class="fa-solid fa-border-all"></i>Dashboard</a></li>
+				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/search"}><a href="/search" class="link link--nav"><i class="fa-solid fa-magnifying-glass"></i>Search</a></li>
+				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/statistics"}><a href="/statistics" class="link link--nav"><i class="fa-solid fa-chart-line"></i>Statistics</a></li>
+				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/logs"}><a href="/logs" class="link link--nav"><i class="fa-solid fa-clock-rotate-left"></i>Logs</a></li>
 			</ul>
 		</nav>
 
@@ -42,70 +42,83 @@
 {/if}
 
 <style>
-	.header {
+    .header {
+        display: flex;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.411);
+        max-height: 7rem;
+        padding: 1rem;
+        z-index: 10;
+        flex-shrink: 0;
+    }
+
+    .aside {
+        width: 8rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-shrink: 0;
+        overflow-y: auto;
+
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+
+        z-index: 1;
+    }
+
+    .nav {
+        display: flex;
+        flex-direction: column;
+    }
+
+	.link--nav {
 		display: flex;
-		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.411);
-		max-height: 7rem;
-		padding: 1rem;
-		z-index: 10;
-		flex-shrink: 0;
-	}
-
-	.aside {
-		width: 8rem;
-		min-height: auto;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		align-items: flex-start;
-		flex-shrink: 0;
-
-		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-		padding-left: 1rem;
-		padding-top: 1rem;
-
-		z-index: 1;
-	}
-
-	.nav {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.list {
-		display: flex;
-		flex-direction: column;
 		gap: 0.5rem;
+		align-items: center;
 	}
 
-	.list__item--nav {
-		padding: 0.25rem 1rem;
-	}
+    .list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
 
-	.active {
+    .list__item--nav {
+        padding: 0.25rem 1rem;
+    }
+
+	.list__item--nav:hover {
 		background-color: var(--color-secondary);
 		border-radius: 0.5rem;
 		a {
-		color: var(--color-primary);
+			color: var(--color-primary);
 		}
 	}
 
-	.devider {
-		display: flex;
-		flex: 1;
-		height: 100%;
-	}
+    .active {
+        background-color: var(--color-secondary);
+        border-radius: 0.5rem;
+        a {
+        color: var(--color-primary);
+        }
+    }
 
-	.main {
-		flex: 1;
-		overflow: auto;
-		background-color: var(--color-primary-accent);
-		padding: 1rem;
-	}
+    .devider {
+        display: flex;
+        flex: 1;
+        min-height: 0;
+    }
 
-	.logo {
-		width: 4rem;
-		height: 4rem;
-		margin-right: 1rem;
-	}
+    .main {
+        flex: 1;
+        overflow: auto;
+        background-color: var(--color-primary-accent);
+        padding: 1rem;
+    }
+
+    .logo {
+        width: 4rem;
+        height: 4rem;
+        margin-right: 1rem;
+    }
 </style>
