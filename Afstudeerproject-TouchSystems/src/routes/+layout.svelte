@@ -1,33 +1,45 @@
 <script lang="ts">
-	import logo from '$lib/assets/touchsystems.png';
-	import '$lib/styles/_main.css';
-	import { page } from '$app/stores';
+    import logo from '$lib/assets/touchsystems.png';
+    import '$lib/styles/_main.css';
+    import { page } from '$app/stores';
+    import { signIn, signOut } from '@auth/sveltekit/client';
 
-	let { children } = $props();
-
+    let { children, data } = $props();
 </script>
 
 <header class="header">
-	<img src={logo} alt="TouchSystems Logo" class="logo"/>
-	<h1>TouchSystems</h1>
+    <img src={logo} alt="TouchSystems Logo" class="logo"/>
+    <h1>TouchSystems</h1>
 </header>
+
+{#if data.session?.user}
 
 <div class="devider">
 	<aside class="aside">
 		<nav class="nav">
 			<ul class="list list--nav">
-				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/"}><a href="/">Dashboard</a></li>
+				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/dashboard"}>
+					<a href="/dashboard"><i class="fa-regular fa-house"></i>Dashboard</a></li>
 				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/search"}><a href="/search">Search</a></li>
-				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/statistics"}><a href="/statistics">Statistics</a></li>
+				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/statistics"}><a href="/statistics"><i class="fa-solid fa-chart-line"></i>Statistics</a></li>
 				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/logs"}><a href="/logs">Logs</a></li>
 			</ul>
 		</nav>
+
+	<div class="auth">
+        {#if data.session?.user}
+            <button onclick={() => signOut()}>Sign Out</button>
+        {/if}
+    </div>
 	</aside>
 	
 	<main class="main">
 	{@render children()}
 	</main>
 </div>
+{:else}
+	{@render children()}
+{/if}
 
 <style>
 	.header {
@@ -43,6 +55,9 @@
 		width: 8rem;
 		min-height: auto;
 		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		align-items: flex-start;
 		flex-shrink: 0;
 
 		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -68,8 +83,11 @@
 	}
 
 	.active {
-		background-color: pink;
+		background-color: var(--color-secondary);
 		border-radius: 0.5rem;
+		a {
+		color: var(--color-primary);
+		}
 	}
 
 	.devider {
@@ -81,7 +99,7 @@
 	.main {
 		flex: 1;
 		overflow: auto;
-		background-color: whitesmoke;
+		background-color: var(--color-primary-accent);
 		padding: 1rem;
 	}
 

@@ -1,3 +1,5 @@
+@import url('./_variables.css');
+
 body {
     width: 100vw;
     min-height: 100vh;
@@ -26,4 +28,36 @@ html, body {
 
 .section {
     padding-bottom: 3rem;
+}
+
+.icon--active {
+    color: lightgreen;
+}
+
+.icon--inactive {
+    color: red;
+}
+
+.state--green {
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background-color: lightgreen;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+}
+
+.state--yellow {
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background-color: yellow;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
 }
