@@ -4,7 +4,7 @@ export const load: PageServerLoad = async (event) => {
     const currentPage = Number(event.url.searchParams.get('page') ?? '1');
     const perPage = 8;
 
-    // Replace with your actual data source
+
     const allLogs = [
         { id: 1, date: '13/02/2026', time: '9:31', action: 'Software Uitgezet', client: 'Restaurant naam', user: 'Persoon naam' },
         { id: 2, date: '13/02/2026', time: '9:25', action: 'Software Aangezet', client: 'Café naam', user: 'Persoon naam' },

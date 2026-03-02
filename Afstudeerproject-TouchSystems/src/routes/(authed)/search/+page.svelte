@@ -13,10 +13,6 @@
 
     const types = [...new Set(data.items.map(i => i.category))];
 
-    $effect(() => {
-        // reactive filtered items
-    });
-
     function getFilteredItems() {
         let items = data.items;
         if (activeFilter === 'active') items = items.filter(i => i.status === 'Actief');
@@ -75,7 +71,6 @@
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        // Add markers for items that have coordinates
         data.items.forEach((item) => {
             if (item.lat && item.lng) {
                 L.marker([item.lat, item.lng])
@@ -86,7 +81,7 @@
     });
 </script>
 
-<h1>Zoeken</h1>
+<h1>Search</h1>
 
 <div class="search-layout">
     <div class="search-layout__left">
