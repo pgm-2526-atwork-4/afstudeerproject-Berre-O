@@ -1,21 +1,21 @@
 <h1>Home</h1>
 <section class="section section--boxes">
     <div class="box">
-        <img src="" alt="test">
+        <i class="fa-solid fa-users"></i>
         <div class="box__text">
             <h2>Actieve klanten</h2>
             <p>5</p>
         </div>
     </div>
     <div class="box">
-        <img src="" alt="test">
+        <i class="fa-solid fa-clock"></i>
         <div class="box__text">
             <h2>Bijna verlopen</h2>
             <p>2</p>
         </div>
     </div>
     <div class="box">
-        <img src="" alt="test">
+        <i class="fa-solid fa-calendar-plus"></i>
         <div class="box__text">
             <h2>Nieuw deze maand</h2>
             <p>3</p>
@@ -89,7 +89,19 @@
         border-radius: 1rem;
         width: 20rem;
         display: flex;
+        align-items: center;
+        gap: 2rem;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+
+        p {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        i {
+            font-size: 4rem;
+            color: black;
+        }
     }
 
     .table {

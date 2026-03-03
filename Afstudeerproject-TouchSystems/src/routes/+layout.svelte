@@ -9,7 +9,7 @@
 
 <header class="header">
     <img src={logo} alt="TouchSystems Logo" class="logo"/>
-    <h1>TouchSystems</h1>
+    <h1 class="header__title">Touch<span class="header__title--small">Systems</span></h1>
 </header>
 
 {#if data.session?.user}
@@ -28,7 +28,7 @@
 
 	<div class="auth">
         {#if data.session?.user}
-            <button onclick={() => signOut()}>Sign Out</button>
+            <button onclick={() => signOut()} class="button button--auth"><i class="fa-solid fa-right-from-bracket"></i>Sign Out</button>
         {/if}
     </div>
 	</aside>
@@ -45,11 +45,22 @@
     .header {
         display: flex;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.411);
+		align-items: center;
+		gap: 2rem;
         max-height: 7rem;
         padding: 1rem;
         z-index: 10;
         flex-shrink: 0;
     }
+
+	.header__title--small {
+		font-style: normal;
+		font-weight: 200;
+	}
+
+	.header__title {
+		font-weight: 600;
+	}
 
     .aside {
         width: 8rem;
@@ -80,11 +91,11 @@
     .list {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.75rem;
     }
 
     .list__item--nav {
-        padding: 0.25rem 1rem;
+        padding: 0.5rem 1rem;
     }
 
 	.list__item--nav:hover {
@@ -92,6 +103,8 @@
 		border-radius: 0.5rem;
 		a {
 			color: var(--color-primary);
+			font-weight: 400;
+			font-style: normal;
 		}
 	}
 
@@ -117,8 +130,27 @@
     }
 
     .logo {
-        width: 4rem;
-        height: 4rem;
+		margin-left: 1rem;
+        width: 5rem;
+        height: 5rem;
         margin-right: 1rem;
     }
+
+	.auth {
+		border-top: 1px solid var(--color-secondary);
+		width: 100%;
+	}
+
+	.button {
+		background-color: transparent;
+		border: none;
+		cursor: pointer;
+	}
+
+	.button--auth {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+		padding: 1rem;
+	}
 </style>
