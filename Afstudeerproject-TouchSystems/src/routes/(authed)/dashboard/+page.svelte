@@ -1,3 +1,9 @@
+<script lang="ts">
+  let { data } = $props();
+  console.log('Page data:', data);
+  console.log('Clients:', data.clients);
+</script>
+
 <h1>Home</h1>
 <section class="section section--boxes">
     <div class="box">

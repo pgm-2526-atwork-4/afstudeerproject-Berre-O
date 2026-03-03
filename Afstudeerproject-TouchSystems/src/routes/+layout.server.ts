@@ -1,8 +1,11 @@
 import type { LayoutServerLoad } from "./$types";
 
 export const load: LayoutServerLoad = async (event) => {
-  const session = await event.locals.auth();
+  const authSession = await event.locals.auth();
+  const { session: supabaseSession } = await event.locals.safeGetSession();
+
   return {
-    session,
+    session: authSession ?? supabaseSession,
+    supabaseSession,
   };
 };
