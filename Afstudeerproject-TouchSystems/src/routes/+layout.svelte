@@ -1,93 +1,156 @@
 <script lang="ts">
-	import logo from '$lib/assets/touchsystems.png';
-	import '$lib/styles/_main.css';
-	import { page } from '$app/stores';
+    import logo from '$lib/assets/touchsystems.png';
+    import '$lib/styles/_main.css';
+    import { page } from '$app/stores';
+    import { signIn, signOut } from '@auth/sveltekit/client';
 
-	let { children } = $props();
-
+    let { children, data } = $props();
 </script>
 
 <header class="header">
-	<img src={logo} alt="TouchSystems Logo" class="logo"/>
-	<h1>TouchSystems</h1>
+    <img src={logo} alt="TouchSystems Logo" class="logo"/>
+    <h1 class="header__title">Touch<span class="header__title--small">Systems</span></h1>
 </header>
+
+{#if data.session?.user}
 
 <div class="devider">
 	<aside class="aside">
 		<nav class="nav">
 			<ul class="list list--nav">
-				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/"}><a href="/">Dashboard</a></li>
-				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/search"}><a href="/search">Search</a></li>
-				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/statistics"}><a href="/statistics">Statistics</a></li>
-				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/logs"}><a href="/logs">Logs</a></li>
+				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/dashboard"}>
+					<a href="/dashboard" class="link link--nav"><i class="fa-solid fa-border-all"></i>Dashboard</a></li>
+				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/search"}><a href="/search" class="link link--nav"><i class="fa-solid fa-magnifying-glass"></i>Search</a></li>
+				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/statistics"}><a href="/statistics" class="link link--nav"><i class="fa-solid fa-chart-line"></i>Statistics</a></li>
+				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/logs"}><a href="/logs" class="link link--nav"><i class="fa-solid fa-clock-rotate-left"></i>Logs</a></li>
 			</ul>
 		</nav>
+
+	<div class="auth">
+        {#if data.session?.user}
+            <button onclick={() => signOut()} class="button button--auth"><i class="fa-solid fa-right-from-bracket"></i>Sign Out</button>
+        {/if}
+    </div>
 	</aside>
 	
 	<main class="main">
 	{@render children()}
 	</main>
 </div>
+{:else}
+	{@render children()}
+{/if}
 
 <style>
-	.header {
-		display: flex;
-		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.411);
-		max-height: 7rem;
-		padding: 1rem;
-		z-index: 10;
-		flex-shrink: 0;
+    .header {
+        display: flex;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.411);
+		align-items: center;
+		gap: 2rem;
+        max-height: 7rem;
+        padding: 1rem;
+        z-index: 10;
+        flex-shrink: 0;
+    }
+
+	.header__title--small {
+		font-style: normal;
+		font-weight: 200;
 	}
 
-	.aside {
-		width: 8rem;
-		min-height: auto;
-		display: flex;
-		flex-shrink: 0;
-
-		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-		padding-left: 1rem;
-		padding-top: 1rem;
-
-		z-index: 1;
+	.header__title {
+		font-weight: 600;
 	}
 
-	.nav {
-		display: flex;
-		flex-direction: column;
-	}
+    .aside {
+        width: 8rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-shrink: 0;
+        overflow-y: auto;
 
-	.list {
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+
+        z-index: 1;
+    }
+
+    .nav {
+        display: flex;
+        flex-direction: column;
+    }
+
+	.link--nav {
 		display: flex;
-		flex-direction: column;
 		gap: 0.5rem;
+		align-items: center;
 	}
 
-	.list__item--nav {
-		padding: 0.25rem 1rem;
-	}
+    .list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
 
-	.active {
-		background-color: pink;
+    .list__item--nav {
+        padding: 0.5rem 1rem;
+    }
+
+	.list__item--nav:hover {
+		background-color: var(--color-secondary);
 		border-radius: 0.5rem;
+		a {
+			color: var(--color-primary);
+			font-weight: 400;
+			font-style: normal;
+		}
 	}
 
-	.devider {
+    .active {
+        background-color: var(--color-secondary);
+        border-radius: 0.5rem;
+        a {
+        color: var(--color-primary);
+        }
+    }
+
+    .devider {
+        display: flex;
+        flex: 1;
+        min-height: 0;
+    }
+
+    .main {
+        flex: 1;
+        overflow: auto;
+        background-color: var(--color-primary-accent);
+        padding: 1rem;
+    }
+
+    .logo {
+		margin-left: 1rem;
+        width: 5rem;
+        height: 5rem;
+        margin-right: 1rem;
+    }
+
+	.auth {
+		border-top: 1px solid var(--color-secondary);
+		width: 100%;
+	}
+
+	.button {
+		background-color: transparent;
+		border: none;
+		cursor: pointer;
+	}
+
+	.button--auth {
 		display: flex;
-		flex: 1;
-		height: 100%;
-	}
-
-	.main {
-		flex: 1;
-		overflow: auto;
-		background-color: whitesmoke;
+		gap: 0.5rem;
+		align-items: center;
 		padding: 1rem;
-	}
-
-	.logo {
-		width: 4rem;
-		height: 4rem;
-		margin-right: 1rem;
 	}
 </style>
