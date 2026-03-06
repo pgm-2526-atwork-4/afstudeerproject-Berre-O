@@ -17,7 +17,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
       *,
       subscriptions (*),
       software (*),
-      notes (*)
+      notes (*),
+      contact (*)
     `,
     )
     .eq("id", slug)

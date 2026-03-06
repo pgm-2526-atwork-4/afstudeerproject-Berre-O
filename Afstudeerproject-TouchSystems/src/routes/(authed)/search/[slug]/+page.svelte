@@ -5,6 +5,16 @@
     let warningToggle = $state(data.client.software.warning);
     let disableToggle = $state(data.client.software.status);
 
+    function getInitials(name: string): string {
+        const names = name.trim().split(' ').filter(Boolean);
+        if (names.length >= 2) {
+            return (names[0].charAt(0) + names[1].charAt(0)).toUpperCase();
+        }
+        return names[0].charAt(0).toUpperCase();
+    }
+
+    let initials = getInitials(data.client.name);
+
     function handleSaveNote() {
         if (!noteInput.trim()) return;
         noteInput = '';
@@ -14,7 +24,7 @@
 <a href="/search" class="back-link"><i class="fa-solid fa-arrow-left"></i> Terug naar zoeken</a>
 
 <section class="detail-header">
-    <div class="detail-header__avatar">{data.client.initials}</div>
+    <div class="detail-header__avatar">{initials}</div>
     <div class="detail-header__info">
         <h1 class="detail-header__name">
             {data.client.name}
@@ -40,15 +50,15 @@
             <div class="detail-card__grid">
                 <div class="detail-card__field">
                     <span class="detail-card__label">Email</span>
-                    <span class="detail-card__value"></span>
+                    <span class="detail-card__value">{data.client.contact.email}</span>
                 </div>
                 <div class="detail-card__field">
                     <span class="detail-card__label">Adres</span>
-                    <span class="detail-card__value"></span>
+                    <span class="detail-card__value">{data.client.contact.adres}</span>
                 </div>
                 <div class="detail-card__field">
                     <span class="detail-card__label">Telefoon</span>
-                    <span class="detail-card__value"></span>
+                    <span class="detail-card__value">{data.client.contact.phone}</span>
                 </div>
                 <div class="detail-card__field">
                     <span class="detail-card__label">KVK</span>
