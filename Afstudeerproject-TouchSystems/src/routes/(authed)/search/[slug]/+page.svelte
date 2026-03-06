@@ -3,11 +3,10 @@
     let activeTab = $state('overview');
     let noteInput = $state('');
     let warningToggle = $state(data.client.software.warning);
-    let disableToggle = $state(data.client.software.disable);
+    let disableToggle = $state(data.client.software.status);
 
     function handleSaveNote() {
         if (!noteInput.trim()) return;
-        // TODO: save note to database
         noteInput = '';
     }
 </script>
@@ -19,9 +18,9 @@
     <div class="detail-header__info">
         <h1 class="detail-header__name">
             {data.client.name}
-            <span class="badge badge--status">{data.client.status}</span>
-            <span class="badge badge--software" class:badge--active={data.client.softwareStatus === 'Active'} class:badge--inactive={data.client.softwareStatus !== 'Active'}>
-                {data.client.softwareStatus === 'Active' ? 'Software Aan' : 'Software Uit'}
+            <span class="badge badge--status" class:badge--active={data.client.subscriptions.status === "Payed"} class:badge--renew={data.client.subscriptions.status === "Almost up"} class:badge--inactive={data.client.subscriptions.status === "Off"}>{data.client.subscriptions.status}</span>
+            <span class="badge badge--software" class:badge--active={data.client.software.status} class:badge--inactive={!data.client.software.status}>
+                {data.client.software.status ? 'Software Aan' : 'Software Uit'}
             </span>
         </h1>
         <p class="detail-header__sub">Contact: John Doe</p>
@@ -41,19 +40,19 @@
             <div class="detail-card__grid">
                 <div class="detail-card__field">
                     <span class="detail-card__label">Email</span>
-                    <span class="detail-card__value">{data.client.contact.email}</span>
+                    <span class="detail-card__value"></span>
                 </div>
                 <div class="detail-card__field">
                     <span class="detail-card__label">Adres</span>
-                    <span class="detail-card__value">{data.client.contact.address}</span>
+                    <span class="detail-card__value"></span>
                 </div>
                 <div class="detail-card__field">
                     <span class="detail-card__label">Telefoon</span>
-                    <span class="detail-card__value">{data.client.contact.phone}</span>
+                    <span class="detail-card__value"></span>
                 </div>
                 <div class="detail-card__field">
                     <span class="detail-card__label">KVK</span>
-                    <span class="detail-card__value">{data.client.contact.kvk}</span>
+                    <span class="detail-card__value">{data.client.company_number}</span>
                 </div>
             </div>
         </div>
@@ -63,15 +62,15 @@
             <div class="detail-card__grid">
                 <div class="detail-card__field">
                     <span class="detail-card__label">Subscription Type</span>
-                    <span class="detail-card__value detail-card__value--highlight">{data.client.account.subscriptionType}</span>
+                    <span class="detail-card__value detail-card__value--highlight">{data.client.subscriptions.type}</span>
                 </div>
                 <div class="detail-card__field">
                     <span class="detail-card__label">Software Status</span>
-                    <span class="detail-card__value detail-card__value--green">{data.client.account.softwareStatus}</span>
+                    <span class="detail-card__value detail-card__value--green">{data.client.subscriptions.status}</span>
                 </div>
                 <div class="detail-card__field">
                     <span class="detail-card__label">Subscription Price</span>
-                    <span class="detail-card__value detail-card__value--highlight">{data.client.account.subscriptionPrice}</span>
+                    <span class="detail-card__value detail-card__value--highlight"></span>
                 </div>
             </div>
         </div>
@@ -84,13 +83,13 @@
     <div class="detail-content detail-content--single">
         <div class="detail-card detail-card--full">
             <h2 class="detail-card__title">Notes</h2>
-            {#each data.client.notes as note (note.id)}
+            {#each data.client.notes as note}
                 <div class="note">
                     <div class="note__header">
-                        <span class="note__date">{note.date}</span>
-                        <span class="note__author">by {note.author}</span>
+                        <span class="note__date">{note.created_at}</span>
+                        <span class="note__author"></span>
                     </div>
-                    <p class="note__content">{note.content}</p>
+                    <p class="note__content">{note.information}</p>
                 </div>
             {/each}
 
@@ -123,8 +122,8 @@
                     </label>
                 </div>
                 <div class="control__item">
-                    <i class="fa-solid fa-ban"></i>
-                    <span>Disable</span>
+                    <i class="fa-solid fa-code"></i>
+                    <span>Software</span>
                     <label class="toggle">
                         <input type="checkbox" bind:checked={disableToggle} />
                         <span class="toggle__slider"></span>
@@ -208,8 +207,12 @@
     }
 
     .badge--active {
-        background: #ff9800;
+        background: #4caf50;
         color: white;
+    }
+
+    .badge--renew {
+        background: #c7ca02;
     }
 
     .badge--inactive {

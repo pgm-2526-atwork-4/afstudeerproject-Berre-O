@@ -43,19 +43,21 @@
             </tr>
         </thead>
         <tbody>
+            {#each data.clients as client (client.id)}
             <tr class="table__row">
-                <td class="table__item">TestCafe</td>
-                <td class="table__item">Café</td>
-                <td class="table__item">28/02/2026</td>
+                <td class="table__item">{client.name}</td>
+                <td class="table__item">{client.type}</td>
+                <td class="table__item">{client.subscriptions.expiration_date}</td>
                 <td class="table__item">
-                    <div class="status"><span class="state state--yellow"></span> Bijna Verlopen</div>
+                    <div class="status"><span class="state state--yellow"></span>{client.subscriptions.status}</div>
                 </td>
                 <td class="table__item">
                     <div class="icon icon--active"><span>⏻</span> Actief</div>
                 </td>
-                <td class="table__item">0879867756464554</td>
-                <td class="table__item"><a href="search/1" data-sveltekit-preload-data>></a></td>
+                <td class="table__item">{client.company_number}</td>
+                <td class="table__item"><a href="search/{client.id}" data-sveltekit-preload-data>></a></td>
             </tr>
+            {/each}
             <tr class="table__row">
                 <td class="table__item">TestRestaurant</td>
                 <td class="table__item">Restaurant</td>

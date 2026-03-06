@@ -1,41 +1,34 @@
+import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async ({ params }) => {
-  const id = params.slug;
+export const load: PageServerLoad = async ({ locals, params }) => {
+  const { supabase } = locals;
+  const { slug } = params;
 
-  // Replace with your actual data source
-  const client = {
-    id,
-    name: "TestRestaurant",
-    initials: "TR",
-    type: "Restaurant",
-    status: "Actief",
-    softwareStatus: "Active",
-    contact: {
-      email: "test@testrestaurant.com",
-      address: "Keizersgracht 42, 1015 CX Amsterdam",
-      phone: "+31 020 456 7890",
-      kvk: "30906877564545454",
-    },
-    account: {
-      subscriptionType: "Yearly",
-      softwareStatus: "Active",
-      subscriptionPrice: "€1500",
-    },
-    notes: [
-      {
-        id: 1,
-        date: "15/02/2026",
-        author: "Admin",
-        content:
-          "Large restaurant with 150 seats. Uses TouchSuite including table displays. Requested custom menu integration for their seasonal menu rotations.",
-      },
-    ],
-    software: {
-      warning: false,
-      disable: false,
-    },
-  };
+  if (!supabase) {
+    console.error("Supabase client is not available on locals");
+    throw error(500, "Supabase client not initialized");
+  }
+
+  const { data: client, error: dbError } = await supabase
+    .from("Clients")
+    .select(
+      `
+      *,
+      subscriptions (*),
+      software (*),
+      notes (*)
+    `,
+    )
+    .eq("id", slug)
+    .single();
+
+  if (dbError) {
+    console.error("Supabase error:", dbError);
+    throw error(404, "Client not found");
+  }
+
+  console.log("Client from DB:", client);
 
   return { client };
 };
