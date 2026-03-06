@@ -10,6 +10,8 @@
 <header class="header">
     <img src={logo} alt="TouchSystems Logo" class="logo"/>
     <h1 class="header__title">Touch<span class="header__title--small">Systems</span></h1>
+
+	<a href="/clients/new" class="button button--primary"><i class="fa-solid fa-plus"></i> Add client</a>
 </header>
 
 {#if data.session?.user}

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { backButton } from "$lib/utils";
     let { data } = $props();
     let activeTab = $state('overview');
     let noteInput = $state('');
@@ -21,7 +22,9 @@
     }
 </script>
 
-<a href="/search" class="back-link"><i class="fa-solid fa-arrow-left"></i> Terug naar zoeken</a>
+<button use:backButton class="back-link">
+    <i class="fa-solid fa-arrow-left"></i> Terug
+</button>
 
 <section class="detail-header">
     <div class="detail-header__avatar">{initials}</div>
@@ -155,6 +158,9 @@
         text-decoration: none;
         font-size: 0.9rem;
         margin-bottom: 1rem;
+        background: transparent;
+        border: none;
+        cursor: pointer;
     }
 
     .back-link:hover {

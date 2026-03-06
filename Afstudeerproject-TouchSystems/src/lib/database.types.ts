@@ -20,20 +20,134 @@ export type Database = {
           created_at: string
           id: string
           name: string | null
+          type: string | null
         }
         Insert: {
           company_number?: number | null
           created_at?: string
           id?: string
           name?: string | null
+          type?: string | null
         }
         Update: {
           company_number?: number | null
           created_at?: string
           id?: string
           name?: string | null
+          type?: string | null
         }
         Relationships: []
+      }
+      contact: {
+        Row: {
+          adres: string | null
+          email: string | null
+          id: string
+          person_firstname: string | null
+          person_lastname: string | null
+          phone: string | null
+        }
+        Insert: {
+          adres?: string | null
+          email?: string | null
+          id: string
+          person_firstname?: string | null
+          person_lastname?: string | null
+          phone?: string | null
+        }
+        Update: {
+          adres?: string | null
+          email?: string | null
+          id?: string
+          person_firstname?: string | null
+          person_lastname?: string | null
+          phone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "Clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      logs: {
+        Row: {
+          action: string | null
+          client_id: string
+          created_at: string
+          user_id: string | null
+        }
+        Insert: {
+          action?: string | null
+          client_id: string
+          created_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string | null
+          client_id?: string
+          created_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      notes: {
+        Row: {
+          client_id: string
+          created_at: string
+          id: string
+          information: string | null
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          id?: string
+          information?: string | null
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          id?: string
+          information?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notes_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "Clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      software: {
+        Row: {
+          id: string
+          status: boolean | null
+          warning: boolean | null
+        }
+        Insert: {
+          id: string
+          status?: boolean | null
+          warning?: boolean | null
+        }
+        Update: {
+          id?: string
+          status?: boolean | null
+          warning?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "software_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "Clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscriptions: {
         Row: {
