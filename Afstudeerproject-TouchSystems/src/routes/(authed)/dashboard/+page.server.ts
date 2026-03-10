@@ -12,7 +12,8 @@ export const load: PageServerLoad = async ({ locals }) => {
   const { data: clients, error: dbError } = await supabase
     .from("Clients")
     .select(`*,
-        subscriptions (*)
+        subscriptions (*),
+        software (*)
         `)
     .order("name", { ascending: true });
 

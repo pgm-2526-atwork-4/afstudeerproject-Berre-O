@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { goto } from "$app/navigation";
+
   let { data } = $props();
   console.log('Page data:', data);
   console.log('Clients:', data.clients);
@@ -44,7 +46,13 @@
         </thead>
         <tbody>
             {#each data.clients as client (client.id)}
-            <tr class="table__row">
+            <tr 
+            class="table__row table__row--clickable"
+            onclick={() => goto(`/search/${client.id}`)}
+            onkeydown={(e) => e.key === 'Enter' && goto(`/search/${client.id}`)}
+            role="link"
+            tabindex="0"
+            >
                 <td class="table__item">{client.name}</td>
                 <td class="table__item">{client.type}</td>
                 <td class="table__item">{client.subscriptions?.start_date}</td>
@@ -53,10 +61,9 @@
                     <div class="status"><span class="state state--yellow"></span>{client.subscriptions?.status}</div>
                 </td>
                 <td class="table__item">
-                    <div class="icon icon--active"><span>⏻</span> Actief</div>
+                    <div class="icon" class:icon--active={client.software?.status} class:icon--inactive={!client.software?.status}><span>⏻</span>{client.software?.status ? ' Actief' : ' Niet-Actief'}</div>
                 </td>
                 <td class="table__item">{client.company_number}</td>
-                <td class="table__item"><a href="search/{client.id}" data-sveltekit-preload-data>></a></td>
             </tr>
             {/each}
         </tbody>
@@ -112,6 +119,20 @@
             border-bottom: none;
             color: #333;
             font-weight: 600;
+        }
+
+        .table__row--clickable {
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .table__row--clickable:hover {
+            background-color: #f9fafb; /* Light grey highlight on hover */
+        }
+
+        .table__row--clickable:focus {
+            outline: 2px solid #2563eb;
+            outline-offset: -2px;
         }
     }
 
