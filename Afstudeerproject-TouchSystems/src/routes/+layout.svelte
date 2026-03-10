@@ -30,13 +30,15 @@
 </script>
 
 <header class="header">
-    <img 
-    src={logo} 
-    alt="TouchSystems Logo" 
-    class="logo" 
-    onclick={() => goto(`/`)}
-    />
-    <h1 class="header__title">Touch<span class="header__title--small">Systems</span></h1>
+    <div class="logo-container">
+        <img
+        src={logo}
+        alt="TouchSystems Logo"
+        class="logo"
+        onclick={() => goto(`/`)}
+        />
+        <h1 class="header__title">Touch<span class="header__title--small">Systems</span></h1>
+    </div>
 
     <a href="/clients/new" class="button button--primary"><i class="fa-solid fa-plus"></i> Add client</a>
 </header>
@@ -83,6 +85,7 @@
         display: flex;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.411);
 		align-items: center;
+        justify-content: space-between;
 		gap: 2rem;
         max-height: 7rem;
         padding: 1rem;
@@ -168,6 +171,14 @@
         width: 5rem;
         height: 5rem;
         margin-right: 1rem;
+        cursor: pointer;
+    }
+
+    .logo-container {
+        padding-left: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
     }
 
 	.auth {
@@ -180,6 +191,17 @@
 		border: none;
 		cursor: pointer;
 	}
+
+    .button--primary {
+        color: var(--color-primary);
+        background-color: var(--color-secondary);
+        padding: 0.5rem 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        border-radius: 0.5rem;
+    }
 
 	.button--auth {
 		display: flex;
