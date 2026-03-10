@@ -1,10 +1,18 @@
 <script lang="ts">
     import { backButton } from "$lib/utils";
+    import { getContext } from 'svelte';
+    import type { SupabaseClient } from '@supabase/supabase-js';
+    
     let { data } = $props();
     let activeTab = $state('overview');
     let noteInput = $state('');
-    let warningToggle = $state(data.client.software?.warning);
-    let disableToggle = $state(data.client.software?.status);
+    let warningToggle = $state(data.client.software?.warning ?? false);
+    let disableToggle = $state(data.client.software?.status ?? false);
+    let showConfirmModal = $state(false);
+    let pendingSoftwareState = $state(false);
+    let isUpdating = $state(false);
+
+    const supabase = getContext<SupabaseClient>('supabase');
 
     function getInitials(name: string): string {
         const names = name.trim().split(' ').filter(Boolean);
@@ -20,7 +28,78 @@
         if (!noteInput.trim()) return;
         noteInput = '';
     }
+
+    async function updateWarning(value: boolean) {
+        isUpdating = true;
+        const { error } = await supabase
+            .from('software')
+            .update({ warning: value })
+            .eq('id', data.client.id);
+        
+        if (error) {
+            console.error('Failed to update warning:', error);
+            warningToggle = !value; // Revert on error
+        }
+        isUpdating = false;
+    }
+
+    function handleWarningToggle() {
+        warningToggle = !warningToggle;
+        updateWarning(warningToggle);
+    }
+
+    function handleSoftwareToggle() {
+        pendingSoftwareState = !disableToggle;
+        
+        if (disableToggle) {
+            showConfirmModal = true;
+        } else {
+            confirmSoftwareChange();
+        }
+    }
+
+    async function confirmSoftwareChange() {
+        showConfirmModal = false;
+        isUpdating = true;
+        
+        const { error } = await supabase
+            .from('software')
+            .update({ status: pendingSoftwareState })
+            .eq('id', data.client.id);
+        
+        if (error) {
+            console.error('Failed to update software status:', error);
+        } else {
+            disableToggle = pendingSoftwareState;
+        }
+        isUpdating = false;
+    }
+
+    function cancelSoftwareChange() {
+        showConfirmModal = false;
+    }
 </script>
+
+{#if showConfirmModal}
+    <div class="modal-overlay" onclick={cancelSoftwareChange}>
+        <div class="modal" onclick={(e) => e.stopPropagation()}>
+            <div class="modal__icon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h2 class="modal__title">Software Uitschakelen</h2>
+            <p class="modal__text">
+                Je staat op het punt om de software voor <strong>{data.client.name}</strong> uit te schakelen. 
+                Dit kan invloed hebben op hun diensten.
+            </p>
+            <div class="modal__actions">
+                <button class="btn btn--cancel" onclick={cancelSoftwareChange}>Annuleren</button>
+                <button class="btn btn--danger" onclick={confirmSoftwareChange} disabled={isUpdating}>
+                    {isUpdating ? 'Bezig...' : 'Doorgaan'}
+                </button>
+            </div>
+        </div>
+    </div>
+{/if}
 
 <button use:backButton class="back-link">
     <i class="fa-solid fa-arrow-left"></i> Terug
@@ -32,8 +111,8 @@
         <h1 class="detail-header__name">
             {data.client.name}
             <span class="badge badge--status" class:badge--active={data.client.subscriptions.status === "Payed"} class:badge--renew={data.client.subscriptions.status === "Almost up"} class:badge--inactive={data.client.subscriptions.status === "Off"}>{data.client.subscriptions.status}</span>
-            <span class="badge badge--software" class:badge--active={data.client.software.status} class:badge--inactive={!data.client.software.status}>
-                {data.client.software.status ? 'Software Aan' : 'Software Uit'}
+            <span class="badge badge--software" class:badge--active={disableToggle} class:badge--inactive={!disableToggle}>
+                {disableToggle ? 'Software Aan' : 'Software Uit'}
             </span>
         </h1>
         <p class="detail-header__sub">Contact: John Doe</p>
@@ -130,7 +209,7 @@
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span>Warning</span>
                     <label class="toggle">
-                        <input type="checkbox" bind:checked={warningToggle} />
+                        <input type="checkbox" checked={warningToggle} onchange={handleWarningToggle} disabled={isUpdating} />
                         <span class="toggle__slider"></span>
                     </label>
                 </div>
@@ -138,7 +217,12 @@
                     <i class="fa-solid fa-code"></i>
                     <span>Software</span>
                     <label class="toggle">
-                        <input type="checkbox" bind:checked={disableToggle} />
+                        <input 
+                            type="checkbox" 
+                            checked={disableToggle} 
+                            onclick={(e) => { e.preventDefault(); handleSoftwareToggle(); }} 
+                            disabled={isUpdating} 
+                        />
                         <span class="toggle__slider"></span>
                     </label>
                 </div>
@@ -150,6 +234,84 @@
 {/if}
 
 <style>
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .modal {
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal__icon {
+        width: 60px;
+        height: 60px;
+        background: #fff3e0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 1.5rem;
+        color: #ff9800;
+    }
+
+    .modal__title {
+        margin: 0 0 0.5rem;
+        font-size: 1.25rem;
+        color: #333;
+    }
+
+    .modal__text {
+        color: #666;
+        font-size: 0.95rem;
+        margin: 0 0 1.5rem;
+        line-height: 1.5;
+    }
+
+    .modal__actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .btn--cancel {
+        background: #f5f5f5;
+        color: #666;
+    }
+
+    .btn--cancel:hover {
+        background: #e0e0e0;
+    }
+
+    .btn--danger {
+        background: var(--color-secondary);
+        color: white;
+    }
+
+    .btn--danger:hover {
+        background: color-mix(in srgb, var(--color-secondary) 90%, black 10%);
+    }
+
+    .btn--danger:disabled {
+        background: #ffcdd2;
+        cursor: not-allowed;
+    }
+
     .back-link {
         display: inline-flex;
         align-items: center;
@@ -432,6 +594,11 @@
         opacity: 0;
         width: 0;
         height: 0;
+    }
+
+    .toggle input:disabled + .toggle__slider {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 
     .toggle__slider {
