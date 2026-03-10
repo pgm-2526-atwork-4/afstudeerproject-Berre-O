@@ -3,8 +3,8 @@
     let { data } = $props();
     let activeTab = $state('overview');
     let noteInput = $state('');
-    let warningToggle = $state(data.client.software.warning);
-    let disableToggle = $state(data.client.software.status);
+    let warningToggle = $state(data.client.software?.warning);
+    let disableToggle = $state(data.client.software?.status);
 
     function getInitials(name: string): string {
         const names = name.trim().split(' ').filter(Boolean);

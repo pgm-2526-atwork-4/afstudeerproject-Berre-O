@@ -86,7 +86,7 @@
 	}
 
     .aside {
-        width: 8rem;
+        width: fit-content;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
