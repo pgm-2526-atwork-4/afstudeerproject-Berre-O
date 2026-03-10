@@ -99,10 +99,10 @@
 </script>
 
 <div class="page-header">
-    <h1>New Client</h1>
     <button use:backButton class="btn btn--secondary">
         <i class="fa-solid fa-arrow-left"></i> Back
     </button>
+    <h1>New Client</h1>
 </div>
 
 {#if form?.error}
@@ -295,9 +295,10 @@
 <style>
     .page-header {
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
-        align-items: center;
         margin-bottom: 1rem;
+        width: fit-content;
     }
 
     .page-header h1 {
@@ -509,12 +510,20 @@
     }
 
     .btn--secondary {
-        background-color: #f3f4f6;
-        color: #374151;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #666;
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        background: transparent;
+        border: none;
+        cursor: pointer;
     }
 
     .btn--secondary:hover {
-        background-color: #e5e7eb;
+        color: #333;
     }
 
     @media (max-width: 768px) {
