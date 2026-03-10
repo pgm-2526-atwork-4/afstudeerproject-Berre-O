@@ -1,5 +1,5 @@
-import { error } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
+import { error, fail } from "@sveltejs/kit";
+import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals, params }) => {
   const { supabase } = locals;
@@ -29,7 +29,69 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     throw error(404, "Client not found");
   }
 
-  console.log("Client from DB:", client);
-
   return { client };
+};
+
+export const actions: Actions = {
+  saveNote: async ({ locals, params, request }) => {
+    const { supabase } = locals;
+    const formData = await request.formData();
+    const information = formData.get("information")?.toString().trim();
+
+    if (!information) {
+      return fail(400, { error: "Note content is required" });
+    }
+
+    const { data: newNote, error: dbError } = await supabase
+      .from("notes")
+      .insert({
+        client_id: params.slug,
+        information,
+      })
+      .select()
+      .single();
+
+    if (dbError) {
+      console.error("Failed to save note:", dbError);
+      return fail(500, { error: "Failed to save note" });
+    }
+
+    return { success: true, note: newNote };
+  },
+
+  updateWarning: async ({ locals, params, request }) => {
+    const { supabase } = locals;
+    const formData = await request.formData();
+    const warning = formData.get("warning") === "true";
+
+    const { error: dbError } = await supabase
+      .from("software")
+      .update({ warning })
+      .eq("id", params.slug);
+
+    if (dbError) {
+      console.error("Failed to update warning:", dbError);
+      return fail(500, { error: "Failed to update warning" });
+    }
+
+    return { success: true };
+  },
+
+  updateSoftware: async ({ locals, params, request }) => {
+    const { supabase } = locals;
+    const formData = await request.formData();
+    const status = formData.get("status") === "true";
+
+    const { error: dbError } = await supabase
+      .from("software")
+      .update({ status })
+      .eq("id", params.slug);
+
+    if (dbError) {
+      console.error("Failed to update software status:", dbError);
+      return fail(500, { error: "Failed to update software status" });
+    }
+
+    return { success: true };
+  },
 };

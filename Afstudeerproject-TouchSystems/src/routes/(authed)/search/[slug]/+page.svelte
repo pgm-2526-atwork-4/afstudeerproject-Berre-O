@@ -1,7 +1,6 @@
 <script lang="ts">
     import { backButton } from "$lib/utils";
-    import { getContext } from 'svelte';
-    import type { SupabaseClient } from '@supabase/supabase-js';
+    import { enhance } from "$app/forms";
     
     let { data } = $props();
     let activeTab = $state('overview');
@@ -11,8 +10,8 @@
     let showConfirmModal = $state(false);
     let pendingSoftwareState = $state(false);
     let isUpdating = $state(false);
-
-    const supabase = getContext<SupabaseClient>('supabase');
+    let isSavingNote = $state(false);
+    let notes = $state(data.client.notes ?? []);
 
     function getInitials(name: string): string {
         const names = name.trim().split(' ').filter(Boolean);
@@ -24,59 +23,32 @@
 
     let initials = getInitials(data.client.name);
 
-    function handleSaveNote() {
-        if (!noteInput.trim()) return;
-        noteInput = '';
+    function formatDate(dateString: string): string {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('nl-BE', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     }
 
-    async function updateWarning(value: boolean) {
-        isUpdating = true;
-        const { error } = await supabase
-            .from('software')
-            .update({ warning: value })
-            .eq('id', data.client.id);
-        
-        if (error) {
-            console.error('Failed to update warning:', error);
-            warningToggle = !value; // Revert on error
-        }
-        isUpdating = false;
-    }
+function handleSoftwareClick(e: Event) {
+    e.preventDefault();
 
-    function handleWarningToggle() {
-        warningToggle = !warningToggle;
-        updateWarning(warningToggle);
+    if (disableToggle) {
+        pendingSoftwareState = false;
+        showConfirmModal = true;
+    } else {
+        const form = (e.currentTarget as HTMLInputElement).form;
+        if (form) form.requestSubmit();
     }
-
-    function handleSoftwareToggle() {
-        pendingSoftwareState = !disableToggle;
-        
-        if (disableToggle) {
-            showConfirmModal = true;
-        } else {
-            confirmSoftwareChange();
-        }
-    }
-
-    async function confirmSoftwareChange() {
-        showConfirmModal = false;
-        isUpdating = true;
-        
-        const { error } = await supabase
-            .from('software')
-            .update({ status: pendingSoftwareState })
-            .eq('id', data.client.id);
-        
-        if (error) {
-            console.error('Failed to update software status:', error);
-        } else {
-            disableToggle = pendingSoftwareState;
-        }
-        isUpdating = false;
-    }
+}
 
     function cancelSoftwareChange() {
         showConfirmModal = false;
+
     }
 </script>
 
@@ -93,9 +65,25 @@
             </p>
             <div class="modal__actions">
                 <button class="btn btn--cancel" onclick={cancelSoftwareChange}>Annuleren</button>
-                <button class="btn btn--danger" onclick={confirmSoftwareChange} disabled={isUpdating}>
-                    {isUpdating ? 'Bezig...' : 'Doorgaan'}
-                </button>
+                <form 
+                    method="POST" 
+                    action="?/updateSoftware"
+                    use:enhance={() => {
+                        isUpdating = true;
+                        return async ({ result }) => {
+                            isUpdating = false;
+                            showConfirmModal = false;
+                            if (result.type === 'success') {
+                                disableToggle = pendingSoftwareState;
+                            }
+                        };
+                    }}
+                >
+                    <input type="hidden" name="status" value={pendingSoftwareState.toString()} />
+                    <button type="submit" class="btn btn--danger" disabled={isUpdating}>
+                        {isUpdating ? 'Bezig...' : 'Doorgaan'}
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -175,25 +163,50 @@
     <div class="detail-content detail-content--single">
         <div class="detail-card detail-card--full">
             <h2 class="detail-card__title">Notes</h2>
-            {#each data.client.notes as note}
-                <div class="note">
-                    <div class="note__header">
-                        <span class="note__date">{note.created_at}</span>
-                        <span class="note__author"></span>
-                    </div>
-                    <p class="note__content">{note.information}</p>
-                </div>
-            {/each}
-
-            <div class="note-input">
-                <input
-                    type="text"
+            
+            <form 
+                method="POST" 
+                action="?/saveNote"
+                class="note-input"
+                use:enhance={() => {
+                    isSavingNote = true;
+                    return async ({ result, update }) => {
+                        isSavingNote = false;
+                        if (result.type === 'success' && result.data?.note) {
+                            notes = [result.data.note, ...notes];
+                            noteInput = '';
+                        }
+                    };
+                }}
+            >
+                <textarea
+                    name="information"
                     class="note-input__field"
                     placeholder="Add a note..."
                     bind:value={noteInput}
-                />
-                <button class="btn btn--save" onclick={handleSaveNote}>Save Note</button>
-            </div>
+                    rows="3"
+                ></textarea>
+                <button 
+                    type="submit"
+                    class="btn btn--save" 
+                    disabled={isSavingNote || !noteInput.trim()}
+                >
+                    {isSavingNote ? 'Opslaan...' : 'Save Note'}
+                </button>
+            </form>
+
+            {#if notes.length === 0}
+                <p class="no-notes">Nog geen notities voor deze klant.</p>
+            {:else}
+                {#each notes as note (note.id)}
+                    <div class="note">
+                        <div class="note__header">
+                            <span class="note__date">{formatDate(note.created_at)}</span>
+                        </div>
+                        <p class="note__content">{note.information}</p>
+                    </div>
+                {/each}
+            {/if}
         </div>
     </div>
 
@@ -208,28 +221,66 @@
                 <div class="control__item">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span>Warning</span>
-                    <label class="toggle">
-                        <input type="checkbox" checked={warningToggle} onchange={handleWarningToggle} disabled={isUpdating} />
-                        <span class="toggle__slider"></span>
-                    </label>
+                    <form 
+                        method="POST" 
+                        action="?/updateWarning"
+                        use:enhance={() => {
+                            isUpdating = true;
+                            return async ({ result }) => {
+                                isUpdating = false;
+                                if (result.type !== 'success') {
+                                    warningToggle = !warningToggle;
+                                }
+                            };
+                        }}
+                    >
+                        <input type="hidden" name="warning" value={warningToggle.toString()} />
+                        <label class="toggle">
+                            <input 
+                                type="checkbox" 
+                                bind:checked={warningToggle} 
+                                onchange={(e) => e.currentTarget.form?.requestSubmit()} 
+                                disabled={isUpdating}
+                            />
+                            <span class="toggle__slider"></span>
+                        </label>
+                    </form>
                 </div>
+
                 <div class="control__item">
                     <i class="fa-solid fa-code"></i>
                     <span>Software</span>
-                    <label class="toggle">
-                        <input 
-                            type="checkbox" 
-                            checked={disableToggle} 
-                            onclick={(e) => { e.preventDefault(); handleSoftwareToggle(); }} 
-                            disabled={isUpdating} 
-                        />
-                        <span class="toggle__slider"></span>
-                    </label>
+                    
+                    <form 
+                        method="POST" 
+                        action="?/updateSoftware"
+                        use:enhance={() => {
+                            isUpdating = true;
+                            if (!disableToggle) disableToggle = true; 
+                            
+                            return async ({ result }) => {
+                                isUpdating = false;
+                                if (result.type !== 'success') {
+                                    disableToggle = data.client.software?.status ?? false;
+                                }
+                            };
+                        }}
+                    >
+                        <input type="hidden" name="status" value={(!disableToggle).toString()} />
+                        <label class="toggle">
+                            <input 
+                                type="checkbox" 
+                                checked={disableToggle} 
+                                onclick={handleSoftwareClick}
+                                disabled={isUpdating} 
+                            />
+                            <span class="toggle__slider"></span>
+                        </label>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-
     <a href="/logs" class="btn btn--primary">Logs</a>
 {/if}
 
@@ -532,6 +583,22 @@
         border-radius: 0.5rem;
         font-size: 0.9rem;
         outline: none;
+        resize: vertical;
+        font-family: inherit;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .btn--save:disabled {
+        background: #a5d6a7;
+        cursor: not-allowed;
+    }
+
+    .no-notes {
+        color: #999;
+        font-size: 0.9rem;
+        text-align: center;
+        padding: 2rem;
     }
 
     .note-input__field:focus {
