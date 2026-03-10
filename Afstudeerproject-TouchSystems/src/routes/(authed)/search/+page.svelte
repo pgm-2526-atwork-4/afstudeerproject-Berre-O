@@ -1,40 +1,37 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
-    import { page } from '$app/stores';
     import { onMount } from 'svelte';
+    import { goto } from '$app/navigation';
 
     let { data } = $props();
-    let searchValue = $state(data.query ?? '');
+    let searchValue = $state('');
     let activeFilter = $state<string | null>(null);
     let typeFilter = $state<string | null>(null);
     let typeDropdownOpen = $state(false);
-    let debounceTimer: ReturnType<typeof setTimeout>;
     let mapContainer: HTMLDivElement;
 
-    const types = [...new Set(data.items.map(i => i.category))];
+    const types = $derived([...new Set(data.clients.map(c => c.type).filter(Boolean))]);
 
     function getFilteredItems() {
-        let items = data.items;
-        if (activeFilter === 'active') items = items.filter(i => i.status === 'Actief');
-        if (activeFilter === 'inactive') items = items.filter(i => i.status === 'Niet-Actief');
-        if (typeFilter) items = items.filter(i => i.category === typeFilter);
+        let items = data.clients;
+        
+        if (searchValue) {
+            const query = searchValue.toLowerCase();
+            items = items.filter(item =>
+                item.name?.toLowerCase().includes(query) ||
+                item.type?.toLowerCase().includes(query)
+            );
+        }
+        
+        if (activeFilter === 'active') items = items.filter(i => i.software?.status === true);
+        if (activeFilter === 'inactive') items = items.filter(i => i.software?.status === false);
+        
+        if (typeFilter) items = items.filter(i => i.type === typeFilter);
+        
         return items;
     }
 
     function handleInput(e: Event) {
-        const value = (e.target as HTMLInputElement).value;
-        searchValue = value;
-
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            const params = new URLSearchParams($page.url.searchParams);
-            if (value) {
-                params.set('q', value);
-            } else {
-                params.delete('q');
-            }
-            goto(`?${params.toString()}`, { keepFocus: true });
-        }, 300);
+        searchValue = (e.target as HTMLInputElement).value;
     }
 
     function toggleActive() {
@@ -52,8 +49,8 @@
         typeDropdownOpen = false;
     }
 
-    function getIcon(category: string) {
-        switch (category) {
+    function getIcon(type: string | null | undefined) {
+        switch (type) {
             case 'Restaurant': return 'fa-utensils';
             case 'Café': return 'fa-mug-hot';
             case 'Bar': return 'fa-martini-glass';
@@ -70,14 +67,6 @@
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
-
-        data.items.forEach((item) => {
-            if (item.lat && item.lng) {
-                L.marker([item.lat, item.lng])
-                    .addTo(map)
-                    .bindPopup(`<strong>${item.name}</strong><br>${item.category}`);
-            }
-        });
     });
 </script>
 
@@ -128,14 +117,22 @@
         <ul class="results">
             {#each getFilteredItems() as item (item.id)}
                 <li class="results__item">
+                <div 
+                class="results__div results__div--clickable"
+                onclick={() => goto(`/search/${item.id}`)}
+                onkeydown={(e) => e.key === 'Enter' && goto(`/search/${item.id}`)}
+                role="link"
+                tabindex="0"
+                >
                     <div class="results__info">
                         <span class="results__name">{item.name}</span>
-                        <span class="results__status" class:results__status--active={item.status === 'Actief'} class:results__status--inactive={item.status === 'Niet-Actief'}>
+                        <span class="results__status" class:results__status--active={item.software?.status === true} class:results__status--inactive={item.software?.status === false}>
                             <i class="fa-regular fa-clock"></i>
-                            {item.status}
+                            {item.software?.status ? 'Actief' : 'Niet-Actief'}
                         </span>
                     </div>
-                    <i class="fa-solid {getIcon(item.category)} results__icon"></i>
+                    <i class="fa-solid {getIcon(item.type)} results__icon"></i>
+                </div>
                 </li>
             {/each}
         </ul>
@@ -272,9 +269,34 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 1rem;
         border-bottom: 1px solid #eee;
         background: white;
+    }
+
+    .results__div {
+        display: flex;
+        width: 100%;
+        height: auto;
+        padding: 1rem;
+        border-bottom: none;
+        border-top: none;
+        background: transparent;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .results__div--clickable {
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .results__div--clickable:hover {
+        background-color: #f9fafb;
+    }
+
+    .results__div--clickable:focus {
+        outline: 2px solid #2563eb;
+        outline-offset: -2px;
     }
 
     .results__item:first-child {
