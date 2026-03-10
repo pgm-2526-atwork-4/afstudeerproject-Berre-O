@@ -163,6 +163,19 @@ function handleSoftwareClick(e: Event) {
     <div class="detail-content detail-content--single">
         <div class="detail-card detail-card--full">
             <h2 class="detail-card__title">Notes</h2>
+
+            {#if notes.length === 0}
+                <p class="no-notes">Nog geen notities voor deze klant.</p>
+            {:else}
+                {#each notes as note (note.id)}
+                    <div class="note">
+                        <div class="note__header">
+                            <span class="note__date">{formatDate(note.created_at)}</span>
+                        </div>
+                        <p class="note__content">{note.information}</p>
+                    </div>
+                {/each}
+            {/if}
             
             <form 
                 method="POST" 
@@ -194,19 +207,6 @@ function handleSoftwareClick(e: Event) {
                     {isSavingNote ? 'Opslaan...' : 'Save Note'}
                 </button>
             </form>
-
-            {#if notes.length === 0}
-                <p class="no-notes">Nog geen notities voor deze klant.</p>
-            {:else}
-                {#each notes as note (note.id)}
-                    <div class="note">
-                        <div class="note__header">
-                            <span class="note__date">{formatDate(note.created_at)}</span>
-                        </div>
-                        <p class="note__content">{note.information}</p>
-                    </div>
-                {/each}
-            {/if}
         </div>
     </div>
 
