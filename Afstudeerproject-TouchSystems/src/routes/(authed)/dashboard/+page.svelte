@@ -1,3 +1,9 @@
+<script lang="ts">
+  let { data } = $props();
+  console.log('Page data:', data);
+  console.log('Clients:', data.clients);
+</script>
+
 <h1>Home</h1>
 <section class="section section--boxes">
     <div class="box">
@@ -29,49 +35,30 @@
             <tr class="table__row">
                 <th class="table__item table__item--head">Naam</th>
                 <th class="table__item table__item--head">Type</th>
+                <th class="table__item table__item--head">Start Datum</th>
                 <th class="table__item table__item--head">Verval Datum</th>
                 <th class="table__item table__item--head">Status</th>
                 <th class="table__item table__item--head">Software</th>
                 <th class="table__item table__item--head">Ondernemings-Nummer</th>
-                <th class="table__item table__item--head">Actions</th>
             </tr>
         </thead>
         <tbody>
+            {#each data.clients as client (client.id)}
             <tr class="table__row">
-                <td class="table__item">TestCafe</td>
-                <td class="table__item">Café</td>
-                <td class="table__item">28/02/2026</td>
+                <td class="table__item">{client.name}</td>
+                <td class="table__item">{client.type}</td>
+                <td class="table__item">{client.subscriptions?.start_date}</td>
+                <td class="table__item">{client.subscriptions?.expiration_date}</td>
                 <td class="table__item">
-                    <div class="status"><span class="state state--yellow"></span> Bijna Verlopen</div>
+                    <div class="status"><span class="state state--yellow"></span>{client.subscriptions?.status}</div>
                 </td>
                 <td class="table__item">
                     <div class="icon icon--active"><span>⏻</span> Actief</div>
                 </td>
-                <td class="table__item">0879867756464554</td>
-                <td class="table__item"><a href="search/1" data-sveltekit-preload-data>></a></td>
+                <td class="table__item">{client.company_number}</td>
+                <td class="table__item"><a href="search/{client.id}" data-sveltekit-preload-data>></a></td>
             </tr>
-            <tr class="table__row">
-                <td class="table__item">TestRestaurant</td>
-                <td class="table__item">Restaurant</td>
-                <td class="table__item">31/03/2027</td>
-                <td class="table__item">
-                    <div class="status"><span class="state state--green"></span> Betaald</div>
-                </td>
-                <td class="table__item">
-                    <div class="icon icon--inactive"><span>⏻</span> Niet-Actief</div>
-                </td>
-                <td class="table__item">0879867756464554</td>
-                <td class="table__item">></td>
-            </tr>
-            <tr class="table__row">
-                <td class="table__item">&nbsp;</td>
-                <td class="table__item"></td>
-                <td class="table__item"></td>
-                <td class="table__item"></td>
-                <td class="table__item"></td>
-                <td class="table__item"></td>
-                <td class="table__item">></td>
-            </tr>
+            {/each}
         </tbody>
     </table>
 </section>

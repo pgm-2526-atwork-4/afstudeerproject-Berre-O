@@ -1,11 +1,28 @@
 <script lang="ts">
-    import { signIn } from '@auth/sveltekit/client';
+    import { goto } from '$app/navigation';
+    import { getContext } from 'svelte';
     import logo from '$lib/assets/touchsystems.png';
+    import type { SupabaseClient } from '@supabase/supabase-js';
 
     let { data } = $props();
+    
+    const supabase = getContext<SupabaseClient>('supabase');
+
+    async function signInWithGitHub() {
+        const { data: authData, error } = await supabase.auth.signInWithOAuth({
+            provider: 'github',
+            options: {
+                redirectTo: `${window.location.origin}/auth/callback`
+            }
+        });
+
+        if (error) {
+            console.error('Error signing in:', error);
+        }
+    }
 </script>
 
-{#if data.session?.user}
+{#if data.session}
     <p>You are signed in. Redirecting...</p>
 {:else}
     <div class="login">
@@ -13,7 +30,7 @@
             <img src={logo} alt="TouchSystems Logo" class="login__logo" />
             <h1 class="login__title">TouchSystems</h1>
             <p class="login__subtitle">Sign in to access the dashboard</p>
-            <button class="login__button" onclick={() => signIn('github')}>
+            <button class="login__button" onclick={signInWithGitHub}>
                 Sign in with GitHub
             </button>
         </div>
