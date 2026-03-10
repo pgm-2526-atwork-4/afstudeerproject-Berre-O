@@ -2,8 +2,6 @@
     import { goto } from "$app/navigation";
 
   let { data } = $props();
-  console.log('Page data:', data);
-  console.log('Clients:', data.clients);
 </script>
 
 <h1>Home</h1>
