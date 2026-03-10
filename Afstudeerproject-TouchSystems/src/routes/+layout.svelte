@@ -2,43 +2,66 @@
     import logo from '$lib/assets/touchsystems.png';
     import '$lib/styles/_main.css';
     import { page } from '$app/stores';
-    import { signIn, signOut } from '@auth/sveltekit/client';
+    import { invalidate } from '$app/navigation';
+    import { onMount, setContext } from 'svelte';
+    import { createBrowserClient } from '@supabase/ssr';
 
     let { children, data } = $props();
+
+    const supabase = createBrowserClient(data.supabase.url, data.supabase.anonKey);
+    
+    setContext('supabase', supabase);
+
+    onMount(() => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+            if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+                invalidate('supabase:auth');
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    });
+
+    async function signOut() {
+        await supabase.auth.signOut();
+        window.location.href = '/';
+    }
 </script>
 
 <header class="header">
     <img src={logo} alt="TouchSystems Logo" class="logo"/>
     <h1 class="header__title">Touch<span class="header__title--small">Systems</span></h1>
+
+    <a href="/clients/new" class="button button--primary"><i class="fa-solid fa-plus"></i> Add client</a>
 </header>
 
-{#if data.session?.user}
+{#if data.session}
 
 <div class="devider">
-	<aside class="aside">
-		<nav class="nav">
-			<ul class="list list--nav">
-				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/dashboard"}>
-					<a href="/dashboard" class="link link--nav"><i class="fa-solid fa-border-all"></i>Dashboard</a></li>
-				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/search"}><a href="/search" class="link link--nav"><i class="fa-solid fa-magnifying-glass"></i>Search</a></li>
-				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/statistics"}><a href="/statistics" class="link link--nav"><i class="fa-solid fa-chart-line"></i>Statistics</a></li>
-				<li class="list__item list__item--nav" class:active={$page.url.pathname === "/logs"}><a href="/logs" class="link link--nav"><i class="fa-solid fa-clock-rotate-left"></i>Logs</a></li>
-			</ul>
-		</nav>
+    <aside class="aside">
+        <nav class="nav">
+            <ul class="list list--nav">
+                <li class="list__item list__item--nav" class:active={$page.url.pathname === "/dashboard"}>
+                    <a href="/dashboard" class="link link--nav"><i class="fa-solid fa-border-all"></i>Dashboard</a></li>
+                <li class="list__item list__item--nav" class:active={$page.url.pathname === "/search"}><a href="/search" class="link link--nav"><i class="fa-solid fa-magnifying-glass"></i>Search</a></li>
+                <li class="list__item list__item--nav" class:active={$page.url.pathname === "/statistics"}><a href="/statistics" class="link link--nav"><i class="fa-solid fa-chart-line"></i>Statistics</a></li>
+                <li class="list__item list__item--nav" class:active={$page.url.pathname === "/logs"}><a href="/logs" class="link link--nav"><i class="fa-solid fa-clock-rotate-left"></i>Logs</a></li>
+            </ul>
+        </nav>
 
-	<div class="auth">
-        {#if data.session?.user}
-            <button onclick={() => signOut()} class="button button--auth"><i class="fa-solid fa-right-from-bracket"></i>Sign Out</button>
+    <div class="auth">
+        {#if data.session}
+            <button onclick={signOut} class="button button--auth"><i class="fa-solid fa-right-from-bracket"></i>Sign Out</button>
         {/if}
     </div>
-	</aside>
-	
-	<main class="main">
-	{@render children()}
-	</main>
+    </aside>
+    
+    <main class="main">
+    {@render children()}
+    </main>
 </div>
 {:else}
-	{@render children()}
+    {@render children()}
 {/if}
 
 <style>
