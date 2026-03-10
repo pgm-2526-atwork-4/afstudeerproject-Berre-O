@@ -35,11 +35,11 @@
             <tr class="table__row">
                 <th class="table__item table__item--head">Naam</th>
                 <th class="table__item table__item--head">Type</th>
+                <th class="table__item table__item--head">Start Datum</th>
                 <th class="table__item table__item--head">Verval Datum</th>
                 <th class="table__item table__item--head">Status</th>
                 <th class="table__item table__item--head">Software</th>
                 <th class="table__item table__item--head">Ondernemings-Nummer</th>
-                <th class="table__item table__item--head">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -47,9 +47,10 @@
             <tr class="table__row">
                 <td class="table__item">{client.name}</td>
                 <td class="table__item">{client.type}</td>
-                <td class="table__item">{client.subscriptions.expiration_date}</td>
+                <td class="table__item">{client.subscriptions?.start_date}</td>
+                <td class="table__item">{client.subscriptions?.expiration_date}</td>
                 <td class="table__item">
-                    <div class="status"><span class="state state--yellow"></span>{client.subscriptions.status}</div>
+                    <div class="status"><span class="state state--yellow"></span>{client.subscriptions?.status}</div>
                 </td>
                 <td class="table__item">
                     <div class="icon icon--active"><span>⏻</span> Actief</div>
@@ -58,28 +59,6 @@
                 <td class="table__item"><a href="search/{client.id}" data-sveltekit-preload-data>></a></td>
             </tr>
             {/each}
-            <tr class="table__row">
-                <td class="table__item">TestRestaurant</td>
-                <td class="table__item">Restaurant</td>
-                <td class="table__item">31/03/2027</td>
-                <td class="table__item">
-                    <div class="status"><span class="state state--green"></span> Betaald</div>
-                </td>
-                <td class="table__item">
-                    <div class="icon icon--inactive"><span>⏻</span> Niet-Actief</div>
-                </td>
-                <td class="table__item">0879867756464554</td>
-                <td class="table__item">></td>
-            </tr>
-            <tr class="table__row">
-                <td class="table__item">&nbsp;</td>
-                <td class="table__item"></td>
-                <td class="table__item"></td>
-                <td class="table__item"></td>
-                <td class="table__item"></td>
-                <td class="table__item"></td>
-                <td class="table__item">></td>
-            </tr>
         </tbody>
     </table>
 </section>

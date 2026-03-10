@@ -12,6 +12,5 @@ export const GET: RequestHandler = async ({ url, locals }) => {
     }
   }
 
-  // If something went wrong, redirect to home
   throw redirect(303, "/");
 };
