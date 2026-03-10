@@ -5,6 +5,7 @@
     import { invalidate } from '$app/navigation';
     import { onMount, setContext } from 'svelte';
     import { createBrowserClient } from '@supabase/ssr';
+    import { goto } from '$app/navigation';
 
     let { children, data } = $props();
 
@@ -29,7 +30,12 @@
 </script>
 
 <header class="header">
-    <img src={logo} alt="TouchSystems Logo" class="logo"/>
+    <img 
+    src={logo} 
+    alt="TouchSystems Logo" 
+    class="logo" 
+    onclick={() => goto(`/`)}
+    />
     <h1 class="header__title">Touch<span class="header__title--small">Systems</span></h1>
 
     <a href="/clients/new" class="button button--primary"><i class="fa-solid fa-plus"></i> Add client</a>
@@ -42,8 +48,16 @@
         <nav class="nav">
             <ul class="list list--nav">
                 <li class="list__item list__item--nav" class:active={$page.url.pathname === "/dashboard"}>
-                    <a href="/dashboard" class="link link--nav"><i class="fa-solid fa-border-all"></i>Dashboard</a></li>
-                <li class="list__item list__item--nav" class:active={$page.url.pathname === "/search"}><a href="/search" class="link link--nav"><i class="fa-solid fa-magnifying-glass"></i>Search</a></li>
+                    <a href="/dashboard" class="link link--nav">
+                        <i class="fa-solid fa-border-all"></i> Dashboard
+                    </a>
+                </li>
+    
+                <li class="list__item list__item--nav" class:active={$page.url.pathname === "/search"}>
+                    <a href="/search" class="link link--nav">
+                        <i class="fa-solid fa-magnifying-glass"></i> Search
+                    </a>
+                </li>
                 <li class="list__item list__item--nav" class:active={$page.url.pathname === "/statistics"}><a href="/statistics" class="link link--nav"><i class="fa-solid fa-chart-line"></i>Statistics</a></li>
                 <li class="list__item list__item--nav" class:active={$page.url.pathname === "/logs"}><a href="/logs" class="link link--nav"><i class="fa-solid fa-clock-rotate-left"></i>Logs</a></li>
             </ul>
@@ -109,16 +123,13 @@
 		display: flex;
 		gap: 0.5rem;
 		align-items: center;
+        padding: 0.5rem 1rem;
 	}
 
     .list {
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
-    }
-
-    .list__item--nav {
-        padding: 0.5rem 1rem;
     }
 
 	.list__item--nav:hover {
