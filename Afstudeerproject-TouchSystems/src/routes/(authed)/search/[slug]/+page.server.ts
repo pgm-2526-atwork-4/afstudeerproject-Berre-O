@@ -114,7 +114,7 @@ export const actions: Actions = {
       .insert({
         user_id: session?.user?.id,
         client_id: params.slug,
-        action: status ? "Disabled software" : "Enabled software"
+        action: status ? "Enabled software" : "Disabled software"
         });
 
         if (logError) {
