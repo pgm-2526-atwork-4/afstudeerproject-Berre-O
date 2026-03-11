@@ -40,6 +40,7 @@ export const actions: Actions = {
         id: authData.user.id,
         name,
         admin: false,
+        email: email
       });
 
       if (profileError) {
