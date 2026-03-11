@@ -12,7 +12,6 @@
                 <th class="table__item table__item--head">Actie</th>
                 <th class="table__item table__item--head">Klant</th>
                 <th class="table__item table__item--head">Gebruiker</th>
-                <th class="table__item table__item--head"></th>
             </tr>
         </thead>
         <tbody>
@@ -31,7 +30,6 @@
                         <td class="table__item"></td>
                         <td class="table__item"></td>
                         <td class="table__item"></td>
-                        <td class="table__item table__item--action">></td>
                     </tr>
                 {/each}
             {/if}
@@ -66,6 +64,10 @@
 </nav>
 
 <style>
+    th, td {
+        width: 25%;
+    }
+
     .section {
         width: 100%;
         display: flex;
