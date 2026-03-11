@@ -33,7 +33,6 @@
                 <th class="table__item table__item--head">User</th>
                 <th class="table__item table__item--head">Role</th>
                 <th class="table__item table__item--head">Joined</th>
-                <th class="table__item table__item--head table__item--action">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -57,14 +56,6 @@
                         </span>
                     </td>
                     <td class="table__item">{formatDate(user.created_at)}</td>
-                    <td class="table__item table__item--action">
-                        <button class="btn-icon" title="Edit user">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button class="btn-icon btn-icon--danger" title="Delete user">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </td>
                 </tr>
             {/each}
             {#if data.clients.length === 0}
