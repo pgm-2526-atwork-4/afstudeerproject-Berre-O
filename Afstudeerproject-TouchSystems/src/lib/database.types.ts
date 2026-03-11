@@ -78,18 +78,21 @@ export type Database = {
           action: string | null
           client_id: string
           created_at: string
+          id: string
           user_id: string | null
         }
         Insert: {
           action?: string | null
           client_id: string
           created_at?: string
+          id?: string
           user_id?: string | null
         }
         Update: {
           action?: string | null
           client_id?: string
           created_at?: string
+          id?: string
           user_id?: string | null
         }
         Relationships: [
@@ -142,18 +145,21 @@ export type Database = {
         Row: {
           admin: boolean | null
           created_at: string
+          email: string | null
           id: string
           name: string | null
         }
         Insert: {
           admin?: boolean | null
           created_at?: string
+          email?: string | null
           id: string
           name?: string | null
         }
         Update: {
           admin?: boolean | null
           created_at?: string
+          email?: string | null
           id?: string
           name?: string | null
         }
