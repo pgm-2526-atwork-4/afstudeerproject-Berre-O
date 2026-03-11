@@ -123,6 +123,27 @@ export type Database = {
           },
         ]
       }
+      profile: {
+        Row: {
+          admin: boolean | null
+          created_at: string
+          id: string
+          name: string | null
+        }
+        Insert: {
+          admin?: boolean | null
+          created_at?: string
+          id: string
+          name?: string | null
+        }
+        Update: {
+          admin?: boolean | null
+          created_at?: string
+          id?: string
+          name?: string | null
+        }
+        Relationships: []
+      }
       software: {
         Row: {
           id: string

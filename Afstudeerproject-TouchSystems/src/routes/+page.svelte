@@ -1,64 +1,17 @@
 <script lang="ts">
+    import { enhance } from '$app/forms';
     import { goto } from '$app/navigation';
     import { getContext } from 'svelte';
     import logo from '$lib/assets/touchsystems.png';
     import type { SupabaseClient } from '@supabase/supabase-js';
+    import type { ActionData } from './$types';
 
-    let { data } = $props();
+    let { data, form } = $props<{ data: any; form: ActionData }>();
     
     const supabase = getContext<SupabaseClient>('supabase');
 
-    let email = $state('');
-    let password = $state('');
-    let confirmPassword = $state('');
     let loading = $state(false);
-    let error = $state('');
-    let message = $state('');
     let isRegister = $state(false);
-
-    async function signInWithEmail() {
-        loading = true;
-        error = '';
-        
-        const { error: authError } = await supabase.auth.signInWithPassword({
-            email,
-            password
-        });
-
-        if (authError) {
-            error = authError.message;
-            loading = false;
-        } else {
-            goto('/dashboard');
-        }
-    }
-
-    async function signUpWithEmail() {
-        loading = true;
-        error = '';
-        message = '';
-
-        if (password !== confirmPassword) {
-            error = 'Passwords do not match';
-            loading = false;
-            return;
-        }
-
-        const { error: authError } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                emailRedirectTo: `${window.location.origin}/auth/callback`
-            }
-        });
-
-        if (authError) {
-            error = authError.message;
-        } else {
-            message = 'Check your email for the confirmation link!';
-        }
-        loading = false;
-    }
 
     async function signInWithGitHub() {
         const { data: authData, error } = await supabase.auth.signInWithOAuth({
@@ -75,10 +28,6 @@
 
     function toggleMode() {
         isRegister = !isRegister;
-        error = '';
-        message = '';
-        password = '';
-        confirmPassword = '';
     }
 </script>
 
@@ -91,35 +40,55 @@
             <h1 class="login__title">TouchSystems</h1>
             <p class="login__subtitle">{isRegister ? 'Create an account' : 'Sign in to access the dashboard'}</p>
             
-            <form class="login__form" onsubmit={(e) => { e.preventDefault(); isRegister ? signUpWithEmail() : signInWithEmail(); }}>
+            <form 
+                class="login__form" 
+                method="POST" 
+                action={isRegister ? '?/register' : '?/login'}
+                use:enhance={() => {
+                    loading = true;
+                    return async ({ update }) => {
+                        await update();
+                        loading = false;
+                    };
+                }}
+            >
+                {#if isRegister}
+                    <input 
+                        type="text" 
+                        name="name"
+                        class="login__input" 
+                        placeholder="Full Name" 
+                        required 
+                    />
+                {/if}
                 <input 
                     type="email" 
+                    name="email"
                     class="login__input" 
                     placeholder="Email" 
-                    bind:value={email}
                     required 
                 />
                 <input 
                     type="password" 
+                    name="password"
                     class="login__input" 
                     placeholder="Password" 
-                    bind:value={password}
                     required 
                 />
                 {#if isRegister}
                     <input 
                         type="password" 
+                        name="confirmPassword"
                         class="login__input" 
                         placeholder="Confirm Password" 
-                        bind:value={confirmPassword}
                         required 
                     />
                 {/if}
-                {#if error}
-                    <p class="login__error">{error}</p>
+                {#if form?.error}
+                    <p class="login__error">{form.error}</p>
                 {/if}
-                {#if message}
-                    <p class="login__message">{message}</p>
+                {#if form?.success && form?.message}
+                    <p class="login__message">{form.message}</p>
                 {/if}
                 <button class="login__button login__button--primary" type="submit" disabled={loading}>
                     {loading ? (isRegister ? 'Creating account...' : 'Signing in...') : (isRegister ? 'Create account' : 'Sign in')}
