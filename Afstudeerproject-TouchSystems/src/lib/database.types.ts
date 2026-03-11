@@ -78,21 +78,39 @@ export type Database = {
           action: string | null
           client_id: string
           created_at: string
+          id: string
           user_id: string | null
         }
         Insert: {
           action?: string | null
           client_id: string
           created_at?: string
+          id?: string
           user_id?: string | null
         }
         Update: {
           action?: string | null
           client_id?: string
           created_at?: string
+          id?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "logs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "Clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notes: {
         Row: {
@@ -127,18 +145,21 @@ export type Database = {
         Row: {
           admin: boolean | null
           created_at: string
+          email: string | null
           id: string
           name: string | null
         }
         Insert: {
           admin?: boolean | null
           created_at?: string
+          email?: string | null
           id: string
           name?: string | null
         }
         Update: {
           admin?: boolean | null
           created_at?: string
+          email?: string | null
           id?: string
           name?: string | null
         }

@@ -34,10 +34,9 @@
         });
     }
 
-function handleSoftwareClick(e: Event) {
-    e.preventDefault();
-
-    if (disableToggle) {
+function handleSoftwareChange(e: Event) {
+    if (!disableToggle) {
+        disableToggle = true; 
         pendingSoftwareState = false;
         showConfirmModal = true;
     } else {
@@ -251,32 +250,31 @@ function handleSoftwareClick(e: Event) {
                     <i class="fa-solid fa-code"></i>
                     <span>Software</span>
                     
-                    <form 
-                        method="POST" 
-                        action="?/updateSoftware"
-                        use:enhance={() => {
-                            isUpdating = true;
-                            if (!disableToggle) disableToggle = true; 
-                            
-                            return async ({ result }) => {
-                                isUpdating = false;
-                                if (result.type !== 'success') {
-                                    disableToggle = data.client.software?.status ?? false;
-                                }
-                            };
-                        }}
-                    >
-                        <input type="hidden" name="status" value={(!disableToggle).toString()} />
-                        <label class="toggle">
-                            <input 
-                                type="checkbox" 
-                                checked={disableToggle} 
-                                onclick={handleSoftwareClick}
-                                disabled={isUpdating} 
-                            />
-                            <span class="toggle__slider"></span>
-                        </label>
-                    </form>
+                <form 
+                    method="POST" 
+                    action="?/updateSoftware"
+                    use:enhance={() => {
+                        isUpdating = true;
+                        
+                        return async ({ result }) => {
+                            isUpdating = false;
+                            if (result.type !== 'success') {
+                                disableToggle = false;
+                            }
+                        };
+                    }}
+                >
+                    <input type="hidden" name="status" value={disableToggle.toString()} />
+                    <label class="toggle">
+                        <input 
+                            type="checkbox" 
+                            bind:checked={disableToggle} 
+                            onchange={handleSoftwareChange}
+                            disabled={isUpdating} 
+                        />
+                        <span class="toggle__slider"></span>
+                    </label>
+                </form>
                 </div>
             </div>
         </div>
