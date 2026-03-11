@@ -16,13 +16,12 @@
             </tr>
         </thead>
         <tbody>
-            {#each data.logs as log (log.id)}
+            {#each data.logs as log}
                 <tr class="table__row">
-                    <td class="table__item">{log.date} &nbsp; {log.time}</td>
+                    <td class="table__item">{new Date(log.created_at).toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
                     <td class="table__item">{log.action}</td>
-                    <td class="table__item">{log.client}</td>
-                    <td class="table__item">{log.user}</td>
-                    <td class="table__item table__item--action"><a href="/logs/{log.id}">></a></td>
+                    <td class="table__item">{log.Clients?.name}</td>
+                    <td class="table__item">{log.profile?.name}</td>
                 </tr>
             {/each}
             {#if data.logs.length < 8}
