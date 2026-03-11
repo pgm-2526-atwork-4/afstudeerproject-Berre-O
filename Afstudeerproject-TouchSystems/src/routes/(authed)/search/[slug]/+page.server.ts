@@ -61,8 +61,21 @@ export const actions: Actions = {
 
   updateWarning: async ({ locals, params, request }) => {
     const { supabase } = locals;
+    const { session } = await locals.safeGetSession();
     const formData = await request.formData();
     const warning = formData.get("warning") === "true";
+
+    const { error: logError } = await supabase
+      .from("logs")
+      .insert({
+        user_id: session?.user?.id,
+        client_id: params.slug,
+        action: warning ? "Enabled warning" : "Disabled warning"
+        });
+
+        if (logError) {
+          console.error("Failed to create log:", logError)
+        }
 
     const { error: dbError } = await supabase
       .from("software")
@@ -79,8 +92,21 @@ export const actions: Actions = {
 
   updateSoftware: async ({ locals, params, request }) => {
     const { supabase } = locals;
+    const { session } = await locals.safeGetSession();
     const formData = await request.formData();
     const status = formData.get("status") === "true";
+
+        const { error: logError } = await supabase
+      .from("logs")
+      .insert({
+        user_id: session?.user?.id,
+        client_id: params.slug,
+        action: status ? "Disabled software" : "Enabled software"
+        });
+
+        if (logError) {
+          console.error("Failed to create log:", logError)
+        }
 
     const { error: dbError } = await supabase
       .from("software")
