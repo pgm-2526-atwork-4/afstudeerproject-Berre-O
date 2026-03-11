@@ -105,7 +105,7 @@ export const actions: Actions = {
 
     const { error: softwareError } = await supabase.from("software").insert({
       id: client.id,
-      status: false,
+      status: true,
       warning: false,
     });
 
