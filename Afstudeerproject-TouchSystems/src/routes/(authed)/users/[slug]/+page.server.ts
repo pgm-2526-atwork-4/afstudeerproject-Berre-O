@@ -42,4 +42,21 @@ export const actions: Actions = {
 
     return { success: true };
   },
+
+  deleteUser: async ({ locals, params, request }) => {
+    const { supabase } = locals;
+    const {slug } = params;
+
+    const { error: deleteError } = await supabase
+    .from('profile')
+    .delete()
+    .eq('id', slug);
+
+    if (deleteError) {
+        console.error("Failed to delete user:", deleteError);
+        return fail(500, { error: "Failed to delete user"})
+    }
+
+  }
+
 };
