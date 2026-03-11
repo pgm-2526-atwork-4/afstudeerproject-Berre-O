@@ -113,6 +113,20 @@ export const actions: Actions = {
       console.error("Software insert error:", softwareError);
     }
 
+    const { session } = await locals.safeGetSession();
+
+    const { error: logError } = await supabase
+      .from("logs")
+      .insert({
+        user_id: session?.user?.id,
+        client_id: client.id,
+        action: "Added new client"
+        });
+
+        if (logError) {
+          console.error("Failed to create log:", logError)
+        }
+
     if (notes?.trim()) {
       const { error: noteError } = await supabase.from("notes").insert({
         client_id: client.id,
