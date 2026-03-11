@@ -35,6 +35,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 export const actions: Actions = {
   saveNote: async ({ locals, params, request }) => {
     const { supabase } = locals;
+    const { session } = await locals.safeGetSession();
     const formData = await request.formData();
     const information = formData.get("information")?.toString().trim();
 
@@ -55,6 +56,18 @@ export const actions: Actions = {
       console.error("Failed to save note:", dbError);
       return fail(500, { error: "Failed to save note" });
     }
+
+    const { error: logError } = await supabase
+      .from("logs")
+      .insert({
+        user_id: session?.user?.id,
+        client_id: params.slug,
+        action: "Added Note"
+        });
+
+        if (logError) {
+          console.error("Failed to create log:", logError)
+        }
 
     return { success: true, note: newNote };
   },
