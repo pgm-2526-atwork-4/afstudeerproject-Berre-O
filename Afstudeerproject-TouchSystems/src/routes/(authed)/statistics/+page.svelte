@@ -171,22 +171,6 @@
     </div>
 </section>
 
-<section class="chart-card chart-card--full">
-    <h2 class="chart-card__title">Recente Activiteit</h2>
-    <div class="activity-list">
-        {#each data.recentActivity as item (item.id)}
-            <div class="activity-item {getActivityClass(item.type)}">
-                <i class="fa-solid {getActivityIcon(item.type)} activity-item__icon"></i>
-                <div class="activity-item__content">
-                    <span class="activity-item__action">{item.action}</span>
-                    <span class="activity-item__client">{item.client}</span>
-                </div>
-                <span class="activity-item__date">{item.date}</span>
-            </div>
-        {/each}
-    </div>
-</section>
-
 <style>
     .kpi-grid {
         display: grid;
