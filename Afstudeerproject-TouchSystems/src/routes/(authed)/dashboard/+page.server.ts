@@ -25,6 +25,10 @@ export const load: PageServerLoad = async ({ locals }) => {
   console.log("Clients from DB:", clients);
 
   const totalClients = clients.length;
+  const activeClients = clients.filter(
+      (c) => c.subscriptions?.status?.toLowerCase() === 'active'
+  ).length;
+  const inactiveClients = totalClients - activeClients;
   const now = new Date();
   const thisMonth = now.getMonth();
   const thisYear = now.getFullYear();
@@ -46,7 +50,8 @@ export const load: PageServerLoad = async ({ locals }) => {
   const stats = {
     totalClients,
     newThisMonth,
-    expiringSoon
+    expiringSoon,
+    inactiveClients
   }
 
   return { clients: clients ?? [],

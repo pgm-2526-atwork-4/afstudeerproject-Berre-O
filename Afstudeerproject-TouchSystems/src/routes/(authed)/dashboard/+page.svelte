@@ -6,25 +6,40 @@
 
 <h1>Home</h1>
 <section class="section section--boxes">
-    <div class="box">
-        <i class="fa-solid fa-users"></i>
-        <div class="box__text">
-            <h2>Actieve klanten</h2>
-            <p>{data.stats.totalClients}</p>
+    <div class="kpi-card">
+        <div class="kpi-card__icon kpi-card__icon--primary">
+            <i class="fa-solid fa-users"></i>
+        </div>
+        <div class="kpi-card__content">
+            <span class="kpi-card__label">Actieve klanten</span>
+            <span class="kpi-card__value">{data.stats.totalClients}</span>
         </div>
     </div>
-    <div class="box">
-        <i class="fa-solid fa-clock"></i>
-        <div class="box__text">
-            <h2>Bijna verlopen</h2>
-            <p>{data.stats.expiringSoon.length}</p>
+    <div class="kpi-card">
+        <div class="kpi-card__icon kpi-card__icon--warning">
+            <i class="fa-solid fa-clock"></i>
+        </div>
+        <div class="kpi-card__content">
+            <span class="kpi-card__label">Bijna verlopen</span>
+            <span class="kpi-card__value">{data.stats.expiringSoon.length}</span>
         </div>
     </div>
-    <div class="box">
-        <i class="fa-solid fa-calendar-plus"></i>
-        <div class="box__text">
-            <h2>Nieuw deze maand</h2>
-            <p>{data.stats.newThisMonth}</p>
+    <div class="kpi-card">
+        <div class="kpi-card__icon kpi-card__icon--success">
+            <i class="fa-solid fa-calendar-plus"></i>
+        </div>
+        <div class="kpi-card__content">
+            <span class="kpi-card__label">Nieuw deze maand</span>
+            <span class="kpi-card__value">{data.stats.newThisMonth}</span>
+        </div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-card__icon kpi-card__icon--danger">
+            <i class="fa-solid fa-user-minus"></i>
+        </div>
+        <div class="kpi-card__content">
+            <span class="kpi-card__label">Inactieve klanten</span>
+            <span class="kpi-card__value">{data.stats.inactiveClients}</span>
         </div>
     </div>
 </section>
@@ -75,25 +90,77 @@
         gap: 2rem;
     }
 
-    .box {
-        background-color: white;
-        padding: 1rem;
-        border-radius: 1rem;
-        width: 20rem;
+    .section--boxes {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.25rem;
         display: flex;
         align-items: center;
-        gap: 2rem;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        gap: 1rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
 
-        p {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
+    .kpi-card__icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
 
-        i {
-            font-size: 4rem;
-            color: black;
-        }
+    .kpi-card__icon--primary {
+        background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+        color: var(--color-accent);
+    }
+
+    .kpi-card__icon--success {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .kpi-card__icon--warning {
+        background: #fff3e0;
+        color: #e65100;
+    }
+
+    .kpi-card__icon--danger {
+        background: #fdecea;
+        color: #c62828;
+    }
+
+    .kpi-card__content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .kpi-card__label {
+        font-size: 0.8rem;
+        color: #999;
+        font-weight: 500;
+    }
+
+    .kpi-card__value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .section--table {
+        width: 100%;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        overflow: hidden;
     }
 
     .table {
@@ -125,7 +192,7 @@
         }
 
         .table__row--clickable:hover {
-            background-color: #f9fafb; /* Light grey highlight on hover */
+            background-color: #f9fafb;
         }
 
         .table__row--clickable:focus {
@@ -134,11 +201,15 @@
         }
     }
 
-    .section--table {
-            width: 100%;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            overflow: hidden;
+    @media (max-width: 1024px) {
+        .section--boxes {
+            grid-template-columns: repeat(2, 1fr);
         }
+    }
+
+    @media (max-width: 600px) {
+        .section--boxes {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
