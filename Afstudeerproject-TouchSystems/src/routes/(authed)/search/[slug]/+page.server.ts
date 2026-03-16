@@ -1,5 +1,6 @@
 import { error, fail } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
+import { geocodeAddress } from "$lib/geocode";
 
 export const load: PageServerLoad = async ({ locals, params }) => {
   const { supabase } = locals;
@@ -29,6 +30,16 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     throw error(404, "Client not found");
   }
 
+    const address = client.contact?.adres as string;
+    const coords = await geocodeAddress(address);
+
+    await locals.supabase.from('Clients').update({
+        lat: coords?.lat ?? null,
+        lng: coords?.lng ?? null,
+    }).eq('id', slug);
+
+
+    
   return { client };
 };
 

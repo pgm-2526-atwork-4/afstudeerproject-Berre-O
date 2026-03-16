@@ -19,6 +19,8 @@ export type Database = {
           company_number: number | null
           created_at: string
           id: string
+          lat: number | null
+          lng: number | null
           name: string | null
           type: string | null
         }
@@ -26,6 +28,8 @@ export type Database = {
           company_number?: number | null
           created_at?: string
           id?: string
+          lat?: number | null
+          lng?: number | null
           name?: string | null
           type?: string | null
         }
@@ -33,6 +37,8 @@ export type Database = {
           company_number?: number | null
           created_at?: string
           id?: string
+          lat?: number | null
+          lng?: number | null
           name?: string | null
           type?: string | null
         }
@@ -148,6 +154,7 @@ export type Database = {
           email: string | null
           id: string
           name: string | null
+          status: string
         }
         Insert: {
           admin?: boolean | null
@@ -155,6 +162,7 @@ export type Database = {
           email?: string | null
           id: string
           name?: string | null
+          status?: string
         }
         Update: {
           admin?: boolean | null
@@ -162,6 +170,7 @@ export type Database = {
           email?: string | null
           id?: string
           name?: string | null
+          status?: string
         }
         Relationships: []
       }
