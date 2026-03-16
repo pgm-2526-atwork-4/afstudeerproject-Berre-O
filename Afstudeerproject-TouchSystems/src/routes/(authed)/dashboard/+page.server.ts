@@ -41,7 +41,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     if (!c.subscriptions?.expiration_date) return false;
     const expirationDate = new Date(c.subscriptions.expiration_date);
     return expirationDate > now && expirationDate <= thirtyDaysFromNow;
-  }).length;
+  });
 
   const stats = {
     totalClients,

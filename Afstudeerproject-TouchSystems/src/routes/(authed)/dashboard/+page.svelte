@@ -17,7 +17,7 @@
         <i class="fa-solid fa-clock"></i>
         <div class="box__text">
             <h2>Bijna verlopen</h2>
-            <p>{data.stats.expiringSoon}</p>
+            <p>{data.stats.expiringSoon.length}</p>
         </div>
     </div>
     <div class="box">
@@ -43,7 +43,7 @@
             </tr>
         </thead>
         <tbody>
-            {#each data.clients as client (client.id)}
+            {#each data.stats.expiringSoon as client (client.id)}
             <tr 
             class="table__row table__row--clickable"
             onclick={() => goto(`/search/${client.id}`)}
