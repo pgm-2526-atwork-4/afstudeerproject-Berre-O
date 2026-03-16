@@ -148,6 +148,7 @@ export type Database = {
           email: string | null
           id: string
           name: string | null
+          status: string
         }
         Insert: {
           admin?: boolean | null
@@ -155,6 +156,7 @@ export type Database = {
           email?: string | null
           id: string
           name?: string | null
+          status?: string
         }
         Update: {
           admin?: boolean | null
@@ -162,6 +164,7 @@ export type Database = {
           email?: string | null
           id?: string
           name?: string | null
+          status?: string
         }
         Relationships: []
       }
