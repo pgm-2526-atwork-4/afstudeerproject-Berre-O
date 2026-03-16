@@ -45,7 +45,7 @@
     {/if}
 </header>
 
-{#if data.session}
+{#if data.session && data.profile?.status === "approved"}
 
 <div class="devider">
     <aside class="aside">
@@ -72,7 +72,7 @@
 
     <div class="auth">
         {#if data.session}
-            <button onclick={signOut} class="button button--auth"><i class="fa-solid fa-right-from-bracket"></i>Sign Out</button>
+            <button onclick={signOut} class="button button--auth"><i class="fa-solid fa-right-from-bracket"></i>Sign Out</button>   
         {/if}
     </div>
     </aside>

@@ -2,6 +2,7 @@ import { SvelteKitAuth } from "@auth/sveltekit";
 import GitHub from "@auth/sveltekit/providers/github";
 import { createServerClient } from "@supabase/ssr";
 import { type Handle, redirect } from "@sveltejs/kit";
+import { sequence } from "@sveltejs/kit/hooks";
 import type { Database } from "$lib/database.types";
 import {
   PUBLIC_SUPABASE_URL,
@@ -17,7 +18,7 @@ const authHandle = SvelteKitAuth({
   ],
 }).handle;
 
-export const handle: Handle = async ({ event, resolve }) => {
+const supabaseHandle: Handle = async ({ event, resolve }) => {
   event.locals.supabase = createServerClient<Database>(
     PUBLIC_SUPABASE_URL,
     PUBLIC_SUPABASE_ANON_KEY,
@@ -60,3 +61,32 @@ export const handle: Handle = async ({ event, resolve }) => {
     },
   });
 };
+
+const approvalHandle: Handle = async ({ event, resolve }) => {
+  const { user } = await event.locals.safeGetSession();
+
+  if (user) {
+    const { data: profile } = await event.locals.supabase
+      .from("profile")
+      .select("status")
+      .eq("id", user.id)
+      .single();
+
+    const pathname = event.url.pathname;
+    const isAuthRoute = pathname.startsWith("/auth");
+    const isPendingRoute = pathname === "/pending";
+    const isRejectedRoute = pathname === "/rejected";
+
+    if (profile?.status === "pending" && !isPendingRoute && !isAuthRoute) {
+      redirect(303, "/pending");
+    }
+
+    if (profile?.status === "rejected" && !isRejectedRoute && !isAuthRoute) {
+      redirect(303, "/rejected");
+    }
+  }
+
+  return resolve(event);
+};
+
+export const handle: Handle = sequence(authHandle, supabaseHandle, approvalHandle);
