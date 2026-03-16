@@ -196,6 +196,7 @@ export type Database = {
           created_at: string
           expiration_date: string | null
           id: string
+          pricing: number | null
           start_date: string | null
           status: string | null
           type: string | null
@@ -204,6 +205,7 @@ export type Database = {
           created_at?: string
           expiration_date?: string | null
           id: string
+          pricing?: number | null
           start_date?: string | null
           status?: string | null
           type?: string | null
@@ -212,6 +214,7 @@ export type Database = {
           created_at?: string
           expiration_date?: string | null
           id?: string
+          pricing?: number | null
           start_date?: string | null
           status?: string | null
           type?: string | null

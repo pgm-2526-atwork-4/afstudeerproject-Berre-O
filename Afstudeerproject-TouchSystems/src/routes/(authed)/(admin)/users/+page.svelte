@@ -21,10 +21,7 @@
     }
 </script>
 
-<div class="page-header">
     <h1>Users</h1>
-    <span class="page-header__count">{data.clients.length} users</span>
-</div>
 
 <section class="section section--table">
     <table class="table">
@@ -68,25 +65,6 @@
 </section>
 
 <style>
-    .page-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .page-header h1 {
-        margin: 0;
-    }
-
-    .page-header__count {
-        background: #f0f0f0;
-        padding: 0.25rem 0.75rem;
-        border-radius: 1rem;
-        font-size: 0.85rem;
-        color: #666;
-    }
-
     .section {
         width: 100%;
         display: flex;
