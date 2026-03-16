@@ -10,21 +10,21 @@
         <i class="fa-solid fa-users"></i>
         <div class="box__text">
             <h2>Actieve klanten</h2>
-            <p>5</p>
+            <p>{data.stats.totalClients}</p>
         </div>
     </div>
     <div class="box">
         <i class="fa-solid fa-clock"></i>
         <div class="box__text">
             <h2>Bijna verlopen</h2>
-            <p>2</p>
+            <p>{data.stats.expiringSoon}</p>
         </div>
     </div>
     <div class="box">
         <i class="fa-solid fa-calendar-plus"></i>
         <div class="box__text">
             <h2>Nieuw deze maand</h2>
-            <p>3</p>
+            <p>{data.stats.newThisMonth}</p>
         </div>
     </div>
 </section>

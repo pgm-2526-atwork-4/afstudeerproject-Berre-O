@@ -24,5 +24,32 @@ export const load: PageServerLoad = async ({ locals }) => {
 
   console.log("Clients from DB:", clients);
 
-  return { clients: clients ?? [] };
+  const totalClients = clients.length;
+  const now = new Date();
+  const thisMonth = now.getMonth();
+  const thisYear = now.getFullYear();
+  const newThisMonth = clients.filter((c) => {
+  const createdAt = new Date(c.created_at);
+    return (
+      createdAt.getMonth() === thisMonth && createdAt.getFullYear() === thisYear
+    );
+  }).length;
+
+  const thirtyDaysFromNow = new Date();
+  thirtyDaysFromNow.setDate(now.getDate() + 30);
+  const expiringSoon = clients.filter((c) => {
+    if (!c.subscriptions?.expiration_date) return false;
+    const expirationDate = new Date(c.subscriptions.expiration_date);
+    return expirationDate > now && expirationDate <= thirtyDaysFromNow;
+  }).length;
+
+  const stats = {
+    totalClients,
+    newThisMonth,
+    expiringSoon
+  }
+
+  return { clients: clients ?? [],
+          stats
+   };
 };
