@@ -129,7 +129,7 @@
 
 	.link--nav {
 		display: flex;
-		gap: 0.5rem;
+		gap: 0.75rem;
 		align-items: center;
         padding: 0.5rem 1rem;
 	}
@@ -214,4 +214,8 @@
 		align-items: center;
 		padding: 1rem;
 	}
+
+    .fa-solid {
+        font-size: 0.9rem;
+    }
 </style>
