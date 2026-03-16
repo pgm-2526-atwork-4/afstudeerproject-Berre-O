@@ -1,5 +1,3 @@
-import { SvelteKitAuth } from "@auth/sveltekit";
-import GitHub from "@auth/sveltekit/providers/github";
 import { createServerClient } from "@supabase/ssr";
 import { type Handle, redirect } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
@@ -8,15 +6,6 @@ import {
   PUBLIC_SUPABASE_URL,
   PUBLIC_SUPABASE_ANON_KEY,
 } from "$env/static/public";
-
-const authHandle = SvelteKitAuth({
-  providers: [
-    GitHub({
-      clientId: process.env.AUTH_GITHUB_ID,
-      clientSecret: process.env.AUTH_GITHUB_SECRET,
-    }),
-  ],
-}).handle;
 
 const supabaseHandle: Handle = async ({ event, resolve }) => {
   event.locals.supabase = createServerClient<Database>(
@@ -89,4 +78,4 @@ const approvalHandle: Handle = async ({ event, resolve }) => {
   return resolve(event);
 };
 
-export const handle: Handle = sequence(authHandle, supabaseHandle, approvalHandle);
+export const handle: Handle = sequence(supabaseHandle, approvalHandle);
