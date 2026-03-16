@@ -44,6 +44,7 @@
     </div>
 </section>
 
+<h2 class="section__title">Bijna Verlopen</h2>
 <section class="section section--table">
     <table class="table">
         <thead class="table__head">
@@ -94,7 +95,6 @@
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 1.5rem;
-        margin-bottom: 2rem;
     }
 
     .kpi-card {
