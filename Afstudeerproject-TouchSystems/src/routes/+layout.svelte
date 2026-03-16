@@ -45,7 +45,7 @@
     {/if}
 </header>
 
-{#if data.session}
+{#if data.session && data.profile?.status === "approved"}
 
 <div class="devider">
     <aside class="aside">
@@ -57,7 +57,7 @@
                     </a>
                 </li>
     
-                <li class="list__item list__item--nav" class:active={$page.url.pathname === "/search"}>
+                <li class="list__item list__item--nav" class:active={$page.url.pathname.startsWith("/search")}>
                     <a href="/search" class="link link--nav" data-sveltekit-preload-data>
                         <i class="fa-solid fa-magnifying-glass"></i> Search
                     </a>
@@ -65,14 +65,14 @@
                 {#if data.profile?.admin}
                 <li class="list__item list__item--nav" class:active={$page.url.pathname === "/statistics"}><a href="/statistics" class="link link--nav" data-sveltekit-preload-data><i class="fa-solid fa-chart-line"></i>Statistics</a></li>
                 <li class="list__item list__item--nav" class:active={$page.url.pathname === "/logs"}><a href="/logs" class="link link--nav" data-sveltekit-preload-data><i class="fa-solid fa-clock-rotate-left"></i>Logs</a></li>
-                <li class="list__item list__item--nav" class:active={$page.url.pathname === "/users"}><a href="/users" class="link link--nav" data-sveltekit-preload-data><i class="fa-solid fa-user"></i>Users</a></li>
+                <li class="list__item list__item--nav" class:active={$page.url.pathname.startsWith("/users")}><a href="/users" class="link link--nav" data-sveltekit-preload-data><i class="fa-solid fa-user"></i>Users</a></li>
                 {/if}
             </ul>
         </nav>
 
     <div class="auth">
         {#if data.session}
-            <button onclick={signOut} class="button button--auth"><i class="fa-solid fa-right-from-bracket"></i>Sign Out</button>
+            <button onclick={signOut} class="button button--auth"><i class="fa-solid fa-right-from-bracket"></i>Sign Out</button>   
         {/if}
     </div>
     </aside>
@@ -129,7 +129,7 @@
 
 	.link--nav {
 		display: flex;
-		gap: 0.5rem;
+		gap: 0.75rem;
 		align-items: center;
         padding: 0.5rem 1rem;
 	}
@@ -214,4 +214,8 @@
 		align-items: center;
 		padding: 1rem;
 	}
+
+    .fa-solid {
+        font-size: 0.9rem;
+    }
 </style>
