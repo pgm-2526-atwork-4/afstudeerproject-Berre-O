@@ -57,7 +57,7 @@
                     </a>
                 </li>
     
-                <li class="list__item list__item--nav" class:active={$page.url.pathname === "/search"}>
+                <li class="list__item list__item--nav" class:active={$page.url.pathname.startsWith("/search")}>
                     <a href="/search" class="link link--nav" data-sveltekit-preload-data>
                         <i class="fa-solid fa-magnifying-glass"></i> Search
                     </a>
@@ -65,7 +65,7 @@
                 {#if data.profile?.admin}
                 <li class="list__item list__item--nav" class:active={$page.url.pathname === "/statistics"}><a href="/statistics" class="link link--nav" data-sveltekit-preload-data><i class="fa-solid fa-chart-line"></i>Statistics</a></li>
                 <li class="list__item list__item--nav" class:active={$page.url.pathname === "/logs"}><a href="/logs" class="link link--nav" data-sveltekit-preload-data><i class="fa-solid fa-clock-rotate-left"></i>Logs</a></li>
-                <li class="list__item list__item--nav" class:active={$page.url.pathname === "/users"}><a href="/users" class="link link--nav" data-sveltekit-preload-data><i class="fa-solid fa-user"></i>Users</a></li>
+                <li class="list__item list__item--nav" class:active={$page.url.pathname.startsWith("/users")}><a href="/users" class="link link--nav" data-sveltekit-preload-data><i class="fa-solid fa-user"></i>Users</a></li>
                 {/if}
             </ul>
         </nav>
