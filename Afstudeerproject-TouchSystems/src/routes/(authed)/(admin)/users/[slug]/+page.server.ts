@@ -57,6 +57,8 @@ export const actions: Actions = {
         return fail(500, { error: "Failed to delete user"})
     }
 
+    return { success: true };
+
   }
 
 };
