@@ -34,7 +34,7 @@
         </thead>
         <tbody>
             {#each data.clients as user}
-                <tr class="table__row">
+                <tr class="table__row table__row--clickable">
                     <td 
                     class="table__item"
                      onclick={() => goto(`/users/${user.id}`)}
@@ -95,6 +95,22 @@
         border-bottom: 1px solid #f0f0f0;
         font-size: 14px;
         color: #444;
+    }
+    
+    .table__row--clickable {
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+
+    }
+
+
+    .table__row--clickable:hover {
+        background-color: #f9fafb;
+    }
+
+    .table__row--clickable:focus {
+        outline: 2px solid #2563eb;
+        outline-offset: -2px;
     }
 
     .table__item--head {
