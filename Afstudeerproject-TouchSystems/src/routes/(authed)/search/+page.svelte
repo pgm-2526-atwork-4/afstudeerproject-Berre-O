@@ -101,7 +101,7 @@
             });
 
             marker.bindPopup(`
-                <div style="font-family: sans-serif; min-width: 120px;">
+                <div onclick="window.location.href='/search/${client.id}'" style="font-family: sans-serif; min-width: 120px; cursor: pointer;">
                     <strong style="font-size: 0.9rem;">${client.name}</strong><br/>
                     <span style="font-size: 0.8rem; color: ${active ? '#4caf50' : '#f44336'};">
                         ${active ? '● Actief' : '● Niet-Actief'}
@@ -110,7 +110,10 @@
                 </div>
             `);
 
-            marker.on('hover', () => goto(`/search/${client.id}`));
+            marker.on('mouseover', () => marker.openPopup());
+            marker.on('mouseleave', () => marker.closePopup());
+
+            marker.on('click', () => goto(`/search/${client.id}`));
             marker.addTo(map!);
             bounds.push([client.lat, client.lng]);
         });
