@@ -1,11 +1,14 @@
 <script lang="ts">
     import { backButton } from "$lib/utils";
     import { enhance } from "$app/forms";
+    import { goto } from "$app/navigation";
 
     let { data } = $props();
     let isAdmin = $state(data.profile.admin ?? false);
     let isUpdating = $state(false);
     let showDeleteModal = $state(false);
+    let showToast = $state(false);
+    let toastMessage = $state('');
 
     function getInitials(name: string | null): string {
         if (!name) return '?';
@@ -55,8 +58,15 @@
                         isUpdating = true;
                         return async ({ result }) => {
                             isUpdating = false;
-                            if (result.type === 'redirect') {
+                            if (result.type === 'success') {
                                 showDeleteModal = false;
+                                toastMessage = 'User successfully deleted';
+                                showToast = true;
+                                
+                                setTimeout(() => {
+                                    showToast = false;
+                                    goto('/users');
+                                }, 3000);
                             }
                         };
                     }}
@@ -67,6 +77,13 @@
                 </form>
             </div>
         </div>
+    </div>
+{/if}
+
+{#if showToast}
+    <div class="toast toast--success">
+        <i class="fa-solid fa-check-circle"></i>
+        {toastMessage}
     </div>
 {/if}
 
@@ -468,4 +485,42 @@
     .toggle input:checked + .toggle__slider::before {
         transform: translateX(20px);
     }
+
+    .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 2000;
+    font-size: 0.95rem;
+    font-weight: 500;
+    animation: slideUp 0.3s ease;
+}
+
+.toast--success {
+    border-left: 4px solid #4caf50;
+    color: #2e7d32;
+}
+
+.toast--success i {
+    color: #4caf50;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
 </style>

@@ -29,6 +29,7 @@
             <tr class="table__row">
                 <th class="table__item table__item--head">User</th>
                 <th class="table__item table__item--head">Role</th>
+                <th class="table__item table__item--head">State</th>
                 <th class="table__item table__item--head">Joined</th>
             </tr>
         </thead>
@@ -50,6 +51,11 @@
                     <td class="table__item">
                         <span class="badge" class:badge--admin={user.admin} class:badge--user={!user.admin}>
                             {user.admin ? 'Admin' : 'User'}
+                        </span>
+                    </td>
+                    <td class="table__item">
+                        <span class="badge" class:badge--admin={user.status === 'approved'} class:badge--user={user.status === 'pending'}>
+                            {user.status}
                         </span>
                     </td>
                     <td class="table__item">{formatDate(user.created_at)}</td>
