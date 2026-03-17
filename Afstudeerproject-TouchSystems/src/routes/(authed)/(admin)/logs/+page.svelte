@@ -43,7 +43,7 @@
         class:pagination__link--disabled={data.currentPage <= 1}
         href={data.currentPage > 1 ? `?page=${data.currentPage - 1}` : '#'}
     >
-        &lt;
+<i class="fa-solid fa-chevron-left"></i>
     </a>
     {#each Array(data.totalPages) as _, i}
         <a
@@ -59,7 +59,7 @@
         class:pagination__link--disabled={data.currentPage >= data.totalPages}
         href={data.currentPage < data.totalPages ? `?page=${data.currentPage + 1}` : '#'}
     >
-        &gt;
+    <i class="fa-solid fa-chevron-right"></i>
     </a>
 </nav>
 

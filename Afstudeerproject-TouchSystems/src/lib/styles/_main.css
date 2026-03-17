@@ -12,7 +12,7 @@ body {
   width: 100vw;
   display: flex;
   flex-direction: column;
-  font-family: "Inter", sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 
 a {

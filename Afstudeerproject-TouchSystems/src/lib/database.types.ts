@@ -122,18 +122,21 @@ export type Database = {
         Row: {
           client_id: string
           created_at: string
+          created_by: string | null
           id: string
           information: string | null
         }
         Insert: {
           client_id: string
           created_at?: string
+          created_by?: string | null
           id?: string
           information?: string | null
         }
         Update: {
           client_id?: string
           created_at?: string
+          created_by?: string | null
           id?: string
           information?: string | null
         }
@@ -143,6 +146,13 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "Clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profile"
             referencedColumns: ["id"]
           },
         ]

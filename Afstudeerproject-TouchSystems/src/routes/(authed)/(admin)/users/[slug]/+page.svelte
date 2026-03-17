@@ -102,7 +102,7 @@
             </div>
             <div class="detail-card__field">
                 <span class="detail-card__label">User ID</span>
-                <span class="detail-card__value detail-card__value--mono">{data.profile.id}</span>
+                <span class="detail-card__value">{data.profile.id}</span>
             </div>
             <div class="detail-card__field">
                 <span class="detail-card__label">Created At</span>
@@ -380,13 +380,6 @@
     .detail-card__value {
         font-size: 0.95rem;
         color: #333;
-    }
-
-    .detail-card__value--mono {
-        font-family: monospace;
-        font-size: 0.85rem;
-        color: #666;
-        word-break: break-all;
     }
 
     .control {

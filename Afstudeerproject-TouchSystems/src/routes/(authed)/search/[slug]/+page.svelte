@@ -149,7 +149,7 @@ function handleSoftwareChange(e: Event) {
                 </div>
                 <div class="detail-card__field">
                     <span class="detail-card__label">Subscription Price</span>
-                    <span class="detail-card__value detail-card__value--highlight"></span>
+                    <span class="detail-card__value detail-card__value--highlight">€ {data.client.subscriptions.pricing}</span>
                 </div>
             </div>
         </div>
@@ -527,17 +527,14 @@ function handleSoftwareChange(e: Event) {
     }
 
     .detail-card__value--highlight {
-        background: color-mix(in srgb, var(--color-secondary) 10%, transparent);
-        color: var(--color-secondary);
         padding: 0.3rem 0.75rem;
         border-radius: 0.4rem;
         display: inline-block;
         font-weight: 600;
-        font-size: 1.1rem;
+        font-size: 1.25rem;
     }
 
     .detail-card__value--green {
-        background: #e8f5e9;
         color: #2e7d32;
         padding: 0.3rem 0.75rem;
         border-radius: 0.4rem;
