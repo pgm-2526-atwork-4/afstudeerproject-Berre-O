@@ -26,8 +26,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
   const totalClients = clients.length;
   const activeClients = clients.filter(
-      (c) => c.subscriptions?.status?.toLowerCase() === 'active'
-  ).length;
+      (c) => c.software?.status).length;
   const inactiveClients = totalClients - activeClients;
   const now = new Date();
   const thisMonth = now.getMonth();
