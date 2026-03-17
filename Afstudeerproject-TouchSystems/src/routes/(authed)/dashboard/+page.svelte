@@ -69,8 +69,8 @@
             >
                 <td class="table__item">{client.name}</td>
                 <td class="table__item">{client.type}</td>
-                <td class="table__item">{client.subscriptions?.start_date}</td>
-                <td class="table__item">{client.subscriptions?.expiration_date}</td>
+                <td class="table__item">{client.subscriptions?.start_date ? new Date(client.subscriptions.start_date).toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : '-'}</td>
+                <td class="table__item">{client.subscriptions?.expiration_date ? new Date(client.subscriptions.expiration_date).toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit'}) : '-'}</td>
                 <td class="table__item">
                     <div class="status"><span class="state state--yellow"></span>{client.subscriptions?.status}</div>
                 </td>
