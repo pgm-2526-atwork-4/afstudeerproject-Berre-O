@@ -155,7 +155,6 @@ function handleSoftwareChange(e: Event) {
         </div>
     </div>
 
-    <a href="/logs" class="btn btn--primary">Logs</a>
 {/if}
 
 {#if activeTab === 'notes'}
@@ -208,8 +207,6 @@ function handleSoftwareChange(e: Event) {
             </form>
         </div>
     </div>
-
-    <a href="/logs" class="btn btn--primary">Logs</a>
 {/if}
 
 {#if activeTab === 'systems'}
@@ -279,7 +276,6 @@ function handleSoftwareChange(e: Event) {
             </div>
         </div>
     </div>
-    <a href="/logs" class="btn btn--primary">Logs</a>
 {/if}
 
 <style>

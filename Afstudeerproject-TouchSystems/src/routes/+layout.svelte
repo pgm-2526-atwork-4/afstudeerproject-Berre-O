@@ -172,10 +172,8 @@
     }
 
     .logo {
-		margin-left: 1rem;
-        width: 5rem;
-        height: 5rem;
-        margin-right: 1rem;
+        width: 4rem;
+        height: 4rem;
         cursor: pointer;
     }
 

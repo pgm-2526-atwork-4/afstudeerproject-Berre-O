@@ -1,8 +1,49 @@
 <script lang="ts">
     let { data } = $props();
+    let searchValue = $state('');
+    let selectedUser = $state<string | null>(null);
+
+    const uniqueUsers = $derived([...new Set(data.logs.map(log => log.profile?.name).filter(Boolean))]);
+
+    const filteredLogs = $derived(
+        data.logs.filter(log => {
+            const matchesSearch = 
+                searchValue === '' ||
+                log.action?.toLowerCase().includes(searchValue.toLowerCase()) ||
+                log.Clients?.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+                log.profile?.name?.toLowerCase().includes(searchValue.toLowerCase());
+
+            const matchesUser = 
+                selectedUser === null ||
+                log.profile?.name === selectedUser;
+
+            return matchesSearch && matchesUser;
+        })
+    );
 </script>
 
-<h1>Logs</h1>
+<div class="logs-header">
+    <h1>Logs</h1>
+    
+    <div class="filters">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+                type="text"
+                placeholder="Zoeken in acties, klanten, gebruikers..."
+                bind:value={searchValue}
+                class="search-input"
+            />
+        </div>
+
+        <select bind:value={selectedUser} class="user-filter">
+            <option value={null}>Alle gebruikers</option>
+            {#each uniqueUsers as user}
+                <option value={user}>{user}</option>
+            {/each}
+        </select>
+    </div>
+</div>
 
 <section class="section section--table">
     <table class="table">
@@ -15,7 +56,7 @@
             </tr>
         </thead>
         <tbody>
-            {#each data.logs as log}
+            {#each filteredLogs as log}
                 <tr class="table__row">
                     <td class="table__item">{new Date(log.created_at).toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
                     <td class="table__item">{log.action}</td>
@@ -23,8 +64,8 @@
                     <td class="table__item">{log.profile?.name}</td>
                 </tr>
             {/each}
-            {#if data.logs.length < 8}
-                {#each Array(8 - data.logs.length) as _}
+            {#if filteredLogs.length < 8}
+                {#each Array(8 - filteredLogs.length) as _}
                     <tr class="table__row">
                         <td class="table__item">&nbsp;</td>
                         <td class="table__item"></td>
@@ -150,4 +191,55 @@
         color: #ccc;
         pointer-events: none;
     }
+
+    .logs-header {
+    margin-bottom: 1.5rem;
+}
+
+.logs-header h1 {
+    margin-bottom: 1rem;
+}
+
+.filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.search-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    background: white;
+}
+
+.search-box i {
+    color: #999;
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 0.95rem;
+    background: transparent;
+}
+
+.user-filter {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    background: white;
+    font-size: 0.95rem;
+    cursor: pointer;
+    min-width: 200px;
+}
+
+.user-filter:hover {
+    border-color: #999;
+}
 </style>
