@@ -1,6 +1,7 @@
 import { error, fail } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { geocodeAddress } from "$lib/geocode";
+import { fail, redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
   const { supabase } = locals;
@@ -44,6 +45,25 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 };
 
 export const actions: Actions = {
+
+  deleteClient: async ({ locals, params, request }) => {
+    const { supabase } = locals;
+    const { slug } = params;
+
+    const { error: deleteError } = await supabase
+    .from('Clients')
+    .delete()
+    .eq('id', slug);
+
+    if (deleteError) {
+        console.error("Failed to delete client:", deleteError);
+        return fail(500, { error: "Failed to delete client"})
+    }
+
+    return { success: true };
+
+  },
+
   saveNote: async ({ locals, params, request }) => {
     const { supabase } = locals;
     const { session } = await locals.safeGetSession();
