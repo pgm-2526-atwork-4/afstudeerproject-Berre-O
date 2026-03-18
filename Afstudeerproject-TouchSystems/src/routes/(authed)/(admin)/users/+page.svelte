@@ -69,6 +69,9 @@
         </tbody>
     </table>
 </section>
+<div class="btn__wrapper">
+    <a href="/users/applications" class="btn btn--primary">Applications</a>
+</div>
 
 <style>
     .section {
@@ -175,23 +178,25 @@
         color: #666;
     }
 
-    .btn-icon {
-        background: none;
-        border: none;
-        padding: 0.5rem;
-        cursor: pointer;
-        color: #666;
-        border-radius: 0.25rem;
-        transition: all 0.2s;
+	.btn {
+		background-color: transparent;
+		border: none;
+		cursor: pointer;
+	}
+
+    .btn--primary {
+        color: var(--color-primary);
+        background-color: var(--color-secondary);
+        padding: 0.5rem 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        border-radius: 0.5rem;
     }
 
-    .btn-icon:hover {
-        background: #f0f0f0;
-        color: #333;
-    }
-
-    .btn-icon--danger:hover {
-        background: #ffebee;
-        color: #c62828;
+    .btn__wrapper {
+        display: flex;
+        padding: 1rem 0rem;
     }
 </style>
