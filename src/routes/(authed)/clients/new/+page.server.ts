@@ -20,6 +20,7 @@ export const actions: Actions = {
     const phone = fd.get("phone") as string;
     const adres = fd.get("adres") as string;
     const sub_type = fd.get("sub_type") as string;
+    const sub_price = fd.get("sub_price") as string;
     const sub_status = fd.get("sub_status") as string;
     const start_date = fd.get("start_date") as string;
     const expiration_date = fd.get("expiration_date") as string;
@@ -35,6 +36,7 @@ export const actions: Actions = {
       phone,
       adres,
       sub_type,
+      sub_price,
       sub_status,
       start_date,
       expiration_date,
@@ -52,6 +54,10 @@ export const actions: Actions = {
         error: "Subscription type is required.",
         data: formData,
       });
+    
+    }
+    if (!sub_price) {
+      return fail(400, { error: "Price is required.", data: formData });
     }
     if (!start_date) {
       return fail(400, { error: "Start date is required.", data: formData });
@@ -94,6 +100,7 @@ export const actions: Actions = {
     const { error: subError } = await supabase.from("subscriptions").insert({
       id: client.id,
       type: sub_type,
+      pricing: sub_price,
       status: sub_status || "Payed",
       start_date: start_date,
       expiration_date: expiration_date,
