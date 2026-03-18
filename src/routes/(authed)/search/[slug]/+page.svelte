@@ -10,6 +10,8 @@
     let disableToggle = $state(data.client.software?.status ?? false);
     let showConfirmModal = $state(false);
     let showDeleteModal = $state(false);
+    let showToast = $state(false);
+    let toastMessage = $state('');
     let pendingSoftwareState = $state(false);
     let isUpdating = $state(false);
     let isDeleting = $state(false);
@@ -72,8 +74,15 @@
                     use:enhance={() => {
                         isDeleting = true;
                         return async ({ result }) => {
-                            if (result.type === 'redirect') {
-                                await goto(result.location);
+                            if (result.type === 'success') {
+                                showDeleteModal = false;
+                                toastMessage = 'User successfully deleted';
+                                showToast = true;
+                                
+                                setTimeout(() => {
+                                    showToast = false;
+                                    goto('/search');
+                                }, 3000);
                             }
                             isDeleting = false;
                             showDeleteModal = false;
@@ -86,6 +95,13 @@
                 </form>
             </div>
         </div>
+    </div>
+{/if}
+
+{#if showToast}
+    <div class="toast toast--success">
+        <i class="fa-solid fa-check-circle"></i>
+        {toastMessage}
     </div>
 {/if}
 
@@ -768,4 +784,42 @@
     .detail-header__actions {
         margin-left: auto;
     }
+
+        .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 2000;
+    font-size: 0.95rem;
+    font-weight: 500;
+    animation: slideUp 0.3s ease;
+}
+
+.toast--success {
+    border-left: 4px solid #4caf50;
+    color: #2e7d32;
+}
+
+.toast--success i {
+    color: #4caf50;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
 </style>

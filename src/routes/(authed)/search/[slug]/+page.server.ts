@@ -46,15 +46,23 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 
-  deleteClient: async ({ locals: { supabase }, params }) => {
-        const { error } = await supabase.from('Clients').delete().eq('id', params.slug);
+  deleteClient: async ({ locals, params, request }) => {
+    const { supabase } = locals;
+    const { slug } = params;
 
-        if (error) {
-            return fail(500, { message: 'Server error. Try again later.', success: false });
-        }
+    const { error: deleteError } = await supabase
+    .from('Clients')
+    .delete()
+    .eq('id', slug);
 
-        throw redirect(303, '/search');
-    },
+    if (deleteError) {
+        console.error("Failed to delete client:", deleteError);
+        return fail(500, { error: "Failed to delete client"})
+    }
+
+    return { success: true };
+
+  },
 
   saveNote: async ({ locals, params, request }) => {
     const { supabase } = locals;
