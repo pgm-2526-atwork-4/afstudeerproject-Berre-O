@@ -19,9 +19,17 @@
             year: 'numeric'
         });
     }
+
+    function navigateToUser(user: any) {
+        if (user.status === "approved" || user.status === "rejected") {
+            goto(`/users/${user.id}`);
+        } else {
+            goto(`/users/applications`);
+        }
+    }
 </script>
 
-    <h1>Users</h1>
+<h1>Users</h1>
 
 <section class="section section--table">
     <table class="table">
@@ -37,11 +45,11 @@
             {#each data.clients as user}
                 <tr class="table__row table__row--clickable">
                     <td 
-                    class="table__item"
-                     onclick={() => goto(`/users/${user.id}`)}
-                    onkeydown={(e) => e.key === 'Enter' && goto(`/users/${user.id}`)}
-                    role="link"
-                    tabindex="0"
+                        class="table__item"
+                        onclick={() => navigateToUser(user)}
+                        onkeydown={(e) => e.key === 'Enter' && navigateToUser(user)}
+                        role="link"
+                        tabindex="0"
                     >
                         <div class="user">
                             <div class="user__avatar">{getInitials(user.name)}</div>
@@ -109,9 +117,7 @@
     .table__row--clickable {
         cursor: pointer;
         transition: background-color 0.2s ease;
-
     }
-
 
     .table__row--clickable:hover {
         background-color: #f9fafb;
@@ -178,11 +184,11 @@
         color: #666;
     }
 
-	.btn {
-		background-color: transparent;
-		border: none;
-		cursor: pointer;
-	}
+    .btn {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+    }
 
     .btn--primary {
         color: var(--color-primary);
