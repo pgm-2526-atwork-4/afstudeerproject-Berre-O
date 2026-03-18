@@ -1,6 +1,7 @@
 import { error, fail } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { geocodeAddress } from "$lib/geocode";
+import { fail, redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
   const { supabase } = locals;
@@ -44,6 +45,17 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 };
 
 export const actions: Actions = {
+
+  deleteClient: async ({ locals: { supabase }, params }) => {
+        const { error } = await supabase.from('Clients').delete().eq('id', params.slug);
+
+        if (error) {
+            return fail(500, { message: 'Server error. Try again later.', success: false });
+        }
+
+        throw redirect(303, '/search');
+    },
+
   saveNote: async ({ locals, params, request }) => {
     const { supabase } = locals;
     const { session } = await locals.safeGetSession();

@@ -1,15 +1,18 @@
 <script lang="ts">
     import { backButton } from "$lib/utils";
     import { enhance } from "$app/forms";
-    
+    import { goto } from "$app/navigation";
+
     let { data } = $props();
     let activeTab = $state('overview');
     let noteInput = $state('');
     let warningToggle = $state(data.client.software?.warning ?? false);
     let disableToggle = $state(data.client.software?.status ?? false);
     let showConfirmModal = $state(false);
+    let showDeleteModal = $state(false);
     let pendingSoftwareState = $state(false);
     let isUpdating = $state(false);
+    let isDeleting = $state(false);
     let isSavingNote = $state(false);
     let notes = $state(data.client.notes ?? []);
 
@@ -34,22 +37,57 @@
         });
     }
 
-function handleSoftwareChange(e: Event) {
-    if (!disableToggle) {
-        disableToggle = true; 
-        pendingSoftwareState = false;
-        showConfirmModal = true;
-    } else {
-        const form = (e.currentTarget as HTMLInputElement).form;
-        if (form) form.requestSubmit();
+    function handleSoftwareChange(e: Event) {
+        if (!disableToggle) {
+            disableToggle = true;
+            pendingSoftwareState = false;
+            showConfirmModal = true;
+        } else {
+            const form = (e.currentTarget as HTMLInputElement).form;
+            if (form) form.requestSubmit();
+        }
     }
-}
 
     function cancelSoftwareChange() {
         showConfirmModal = false;
-
     }
 </script>
+
+{#if showDeleteModal}
+    <div class="modal-overlay" onclick={() => (showDeleteModal = false)}>
+        <div class="modal" onclick={(e) => e.stopPropagation()}>
+            <div class="modal__icon modal__icon--danger">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <h2 class="modal__title">Delete Client</h2>
+            <p class="modal__text">
+                Are you sure you want to delete <strong>{data.client.name}</strong>? This action cannot be
+                undone.
+            </p>
+            <div class="modal__actions">
+                <button class="btn btn--cancel" onclick={() => (showDeleteModal = false)}>Cancel</button>
+                <form
+                    method="POST"
+                    action="?/deleteClient"
+                    use:enhance={() => {
+                        isDeleting = true;
+                        return async ({ result }) => {
+                            if (result.type === 'redirect') {
+                                await goto(result.location);
+                            }
+                            isDeleting = false;
+                            showDeleteModal = false;
+                        };
+                    }}
+                >
+                    <button type="submit" class="btn btn--danger" disabled={isDeleting}>
+                        {isDeleting ? 'Deleting...' : 'Delete'}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{/if}
 
 {#if showConfirmModal}
     <div class="modal-overlay" onclick={cancelSoftwareChange}>
@@ -59,13 +97,13 @@ function handleSoftwareChange(e: Event) {
             </div>
             <h2 class="modal__title">Software Uitschakelen</h2>
             <p class="modal__text">
-                Je staat op het punt om de software voor <strong>{data.client.name}</strong> uit te schakelen. 
-                Dit kan invloed hebben op hun diensten.
+                Je staat op het punt om de software voor <strong>{data.client.name}</strong> uit te
+                schakelen. Dit kan invloed hebben op hun diensten.
             </p>
             <div class="modal__actions">
                 <button class="btn btn--cancel" onclick={cancelSoftwareChange}>Annuleren</button>
-                <form 
-                    method="POST" 
+                <form
+                    method="POST"
                     action="?/updateSoftware"
                     use:enhance={() => {
                         isUpdating = true;
@@ -97,19 +135,47 @@ function handleSoftwareChange(e: Event) {
     <div class="detail-header__info">
         <h1 class="detail-header__name">
             {data.client.name}
-            <span class="badge badge--status" class:badge--active={data.client.subscriptions.status === "Payed"} class:badge--renew={data.client.subscriptions.status === "Almost up"} class:badge--inactive={data.client.subscriptions.status === "Off"}>{data.client.subscriptions.status}</span>
-            <span class="badge badge--software" class:badge--active={disableToggle} class:badge--inactive={!disableToggle}>
+            <span
+                class="badge badge--status"
+                class:badge--active={data.client.subscriptions.status === 'Payed'}
+                class:badge--renew={data.client.subscriptions.status === 'Almost up'}
+                class:badge--inactive={data.client.subscriptions.status === 'Off'}
+                >{data.client.subscriptions.status}</span
+            >
+            <span
+                class="badge badge--software"
+                class:badge--active={disableToggle}
+                class:badge--inactive={!disableToggle}
+            >
                 {disableToggle ? 'Software Aan' : 'Software Uit'}
             </span>
         </h1>
         <p class="detail-header__sub">Contact: John Doe</p>
     </div>
+    <div class="detail-header__actions">
+        <button class="btn btn--danger" onclick={() => (showDeleteModal = true)}>
+            <i class="fa-solid fa-trash-can"></i>
+            Delete Client
+        </button>
+    </div>
 </section>
 
 <nav class="tabs">
-    <button class="tabs__item" class:tabs__item--active={activeTab === 'overview'} onclick={() => activeTab = 'overview'}>Overview</button>
-    <button class="tabs__item" class:tabs__item--active={activeTab === 'systems'} onclick={() => activeTab = 'systems'}>Systems</button>
-    <button class="tabs__item" class:tabs__item--active={activeTab === 'notes'} onclick={() => activeTab = 'notes'}>Notes</button>
+    <button
+        class="tabs__item"
+        class:tabs__item--active={activeTab === 'overview'}
+        onclick={() => (activeTab = 'overview')}>Overview</button
+    >
+    <button
+        class="tabs__item"
+        class:tabs__item--active={activeTab === 'systems'}
+        onclick={() => (activeTab = 'systems')}>Systems</button
+    >
+    <button
+        class="tabs__item"
+        class:tabs__item--active={activeTab === 'notes'}
+        onclick={() => (activeTab = 'notes')}>Notes</button
+    >
 </nav>
 
 {#if activeTab === 'overview'}
@@ -141,20 +207,25 @@ function handleSoftwareChange(e: Event) {
             <div class="detail-card__grid">
                 <div class="detail-card__field">
                     <span class="detail-card__label">Subscription Type</span>
-                    <span class="detail-card__value detail-card__value--highlight">{data.client.subscriptions.type}</span>
+                    <span class="detail-card__value detail-card__value--highlight"
+                        >{data.client.subscriptions.type}</span
+                    >
                 </div>
                 <div class="detail-card__field">
                     <span class="detail-card__label">Software Status</span>
-                    <span class="detail-card__value detail-card__value--green">{data.client.subscriptions.status}</span>
+                    <span class="detail-card__value detail-card__value--green"
+                        >{data.client.subscriptions.status}</span
+                    >
                 </div>
                 <div class="detail-card__field">
                     <span class="detail-card__label">Subscription Price</span>
-                    <span class="detail-card__value detail-card__value--highlight">€ {data.client.subscriptions.pricing}</span>
+                    <span class="detail-card__value detail-card__value--highlight"
+                        >€ {data.client.subscriptions.pricing}</span
+                    >
                 </div>
             </div>
         </div>
     </div>
-
 {/if}
 
 {#if activeTab === 'notes'}
@@ -174,9 +245,9 @@ function handleSoftwareChange(e: Event) {
                     </div>
                 {/each}
             {/if}
-            
-            <form 
-                method="POST" 
+
+            <form
+                method="POST"
                 action="?/saveNote"
                 class="note-input"
                 use:enhance={() => {
@@ -197,9 +268,9 @@ function handleSoftwareChange(e: Event) {
                     bind:value={noteInput}
                     rows="3"
                 ></textarea>
-                <button 
+                <button
                     type="submit"
-                    class="btn btn--save" 
+                    class="btn btn--save"
                     disabled={isSavingNote || !noteInput.trim()}
                 >
                     {isSavingNote ? 'Opslaan...' : 'Save Note'}
@@ -217,8 +288,8 @@ function handleSoftwareChange(e: Event) {
                 <div class="control__item">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span>Warning</span>
-                    <form 
-                        method="POST" 
+                    <form
+                        method="POST"
                         action="?/updateWarning"
                         use:enhance={() => {
                             isUpdating = true;
@@ -232,10 +303,10 @@ function handleSoftwareChange(e: Event) {
                     >
                         <input type="hidden" name="warning" value={warningToggle.toString()} />
                         <label class="toggle">
-                            <input 
-                                type="checkbox" 
-                                bind:checked={warningToggle} 
-                                onchange={(e) => e.currentTarget.form?.requestSubmit()} 
+                            <input
+                                type="checkbox"
+                                bind:checked={warningToggle}
+                                onchange={(e) => e.currentTarget.form?.requestSubmit()}
                                 disabled={isUpdating}
                             />
                             <span class="toggle__slider"></span>
@@ -246,32 +317,32 @@ function handleSoftwareChange(e: Event) {
                 <div class="control__item">
                     <i class="fa-solid fa-code"></i>
                     <span>Software</span>
-                    
-                <form 
-                    method="POST" 
-                    action="?/updateSoftware"
-                    use:enhance={() => {
-                        isUpdating = true;
-                        
-                        return async ({ result }) => {
-                            isUpdating = false;
-                            if (result.type !== 'success') {
-                                disableToggle = false;
-                            }
-                        };
-                    }}
-                >
-                    <input type="hidden" name="status" value={disableToggle.toString()} />
-                    <label class="toggle">
-                        <input 
-                            type="checkbox" 
-                            bind:checked={disableToggle} 
-                            onchange={handleSoftwareChange}
-                            disabled={isUpdating} 
-                        />
-                        <span class="toggle__slider"></span>
-                    </label>
-                </form>
+
+                    <form
+                        method="POST"
+                        action="?/updateSoftware"
+                        use:enhance={() => {
+                            isUpdating = true;
+
+                            return async ({ result }) => {
+                                isUpdating = false;
+                                if (result.type !== 'success') {
+                                    disableToggle = false;
+                                }
+                            };
+                        }}
+                    >
+                        <input type="hidden" name="status" value={disableToggle.toString()} />
+                        <label class="toggle">
+                            <input
+                                type="checkbox"
+                                bind:checked={disableToggle}
+                                onchange={handleSoftwareChange}
+                                disabled={isUpdating}
+                            />
+                            <span class="toggle__slider"></span>
+                        </label>
+                    </form>
                 </div>
             </div>
         </div>
@@ -279,6 +350,10 @@ function handleSoftwareChange(e: Event) {
 {/if}
 
 <style>
+    .modal__icon--danger {
+        background: #ffebee;
+        color: #f44336;
+    }
     .modal-overlay {
         position: fixed;
         top: 0;
@@ -689,5 +764,8 @@ function handleSoftwareChange(e: Event) {
 
     .toggle input:checked + .toggle__slider::before {
         transform: translateX(20px);
+    }
+    .detail-header__actions {
+        margin-left: auto;
     }
 </style>
