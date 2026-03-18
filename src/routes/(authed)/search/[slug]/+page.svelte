@@ -153,10 +153,10 @@
             {data.client.name}
             <span
                 class="badge badge--status"
-                class:badge--active={data.client.subscriptions.status === 'Payed'}
-                class:badge--renew={data.client.subscriptions.status === 'Almost up'}
-                class:badge--inactive={data.client.subscriptions.status === 'Off'}
-                >{data.client.subscriptions.status}</span
+                class:badge--active={data.client.subscriptions?.status === 'Payed'}
+                class:badge--renew={data.client.subscriptions?.status === 'Almost up'}
+                class:badge--inactive={data.client.subscriptions?.status === 'Off'}
+                >{data.client.subscriptions?.status}</span
             >
             <span
                 class="badge badge--software"
@@ -169,6 +169,10 @@
         <p class="detail-header__sub">Contact: John Doe</p>
     </div>
     <div class="detail-header__actions">
+        <a href={`${data.client.id}/edit`} class="btn btn--primary">
+            <i class="fa-solid fa-pen-to-square"></i>
+            Edit Client
+        </a>
         <button class="btn btn--danger" onclick={() => (showDeleteModal = true)}>
             <i class="fa-solid fa-trash-can"></i>
             Delete Client
@@ -783,6 +787,9 @@
     }
     .detail-header__actions {
         margin-left: auto;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
     }
 
         .toast {
