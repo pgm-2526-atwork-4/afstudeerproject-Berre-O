@@ -256,6 +256,7 @@
         gap: 1rem;
         width: 35%;
         min-width: 300px;
+        overflow: hidden;
     }
 
     .map-container {
@@ -466,6 +467,8 @@
     .search-layout__left {
         width: 100%;
         min-width: unset;
+        overflow: hidden;
+        max-height: 70vh;
     }
 
     .map-container {
