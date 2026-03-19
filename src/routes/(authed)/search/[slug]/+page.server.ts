@@ -1,7 +1,6 @@
 import { error, fail } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { geocodeAddress } from "$lib/geocode";
-import { fail, redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
   const { supabase } = locals;
