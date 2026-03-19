@@ -19,7 +19,5 @@ export const load: PageServerLoad = async ({ locals }) => {
     throw error(500, "Error fetching clients");
   }
 
-  console.log("Clients from DB:", clients);
-
   return { clients: clients ?? [] };
 };

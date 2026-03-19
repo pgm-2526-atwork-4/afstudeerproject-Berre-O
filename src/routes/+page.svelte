@@ -118,7 +118,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 90vh;
+        min-height: 100vh;
         background-color: #f5f5f5;
     }
 
@@ -126,7 +126,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-self: center;
         gap: 1rem;
         padding: 3rem;
         background: white;
@@ -251,5 +250,27 @@
 
     .login__toggle-btn:hover {
         color: #0052a3;
+    }
+
+    @media (max-width: 480px) {
+        .login {
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .login__card {
+            padding: 2rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: none;
+        }
+
+        .login__logo {
+            width: 4rem;
+            height: 4rem;
+        }
+
+        .login__title {
+            font-size: 1.5rem;
+        }
     }
 </style>

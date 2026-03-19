@@ -22,8 +22,6 @@ export const load: PageServerLoad = async ({ locals }) => {
     throw error(500, "Error fetching clients");
   }
 
-  console.log("Clients from DB:", clients);
-
   const totalClients = clients.length;
   const activeClients = clients.filter(
       (c) => c.software?.status).length;

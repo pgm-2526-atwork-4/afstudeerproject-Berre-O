@@ -541,4 +541,32 @@
             grid-template-columns: 1fr;
         }
     }
+
+    @media (max-width: 600px) {
+    .step__label {
+        display: none;
+    }
+
+    .step-indicator__line {
+        width: 2rem;
+    }
+
+    .field-row {
+        grid-template-columns: 1fr;
+    }
+
+    .form-section--full {
+        max-width: unset;
+    }
+
+    .actions {
+        flex-wrap: wrap;
+    }
+
+    .actions .btn--primary,
+    .actions .btn--secondary {
+        flex: 1;
+        justify-content: center;
+    }
+}
 </style>

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
+    import { backButton } from '$lib/utils.ts';
 
     let { data } = $props();
 
@@ -21,9 +22,13 @@
     }
 </script>
 
+<button use:backButton class="back-link">
+    <i class="fa-solid fa-arrow-left"></i> Back to Users
+</button>
+
 <h1>Registraties</h1>
 
-<section class="section section--table">
+<section class="section section--table table-wrapper">
     <table class="table">
         <thead class="table__head">
             <tr class="table__row">
@@ -75,11 +80,67 @@
     </table>
 </section>
 
+<section class="card-list">
+    {#each data.pending as user (user.id)}
+        <div class="reg-card">
+            <div class="reg-card__header">
+                <div class="user">
+                    <div class="user__avatar">{getInitials(user.name)}</div>
+                    <div class="user__info">
+                        <span class="user__name">{user.name ?? '—'}</span>
+                        <span class="user__email">{user.email}</span>
+                    </div>
+                </div>
+                <span class="reg-card__date">{formatDate(user.created_at)}</span>
+            </div>
+            <div class="reg-card__actions">
+                <form method="POST" action="?/approve" use:enhance>
+                    <input type="hidden" name="userId" value={user.id} />
+                    <button type="submit" class="btn btn--approve btn--full">
+                        <i class="fa-solid fa-check"></i>
+                        Goedkeuren
+                    </button>
+                </form>
+                <form method="POST" action="?/reject" use:enhance>
+                    <input type="hidden" name="userId" value={user.id} />
+                    <button type="submit" class="btn btn--reject btn--full">
+                        <i class="fa-solid fa-xmark"></i>
+                        Weigeren
+                    </button>
+                </form>
+            </div>
+        </div>
+    {:else}
+        <div class="card-list__empty">
+            <i class="fa-solid fa-circle-check"></i>
+            <p>Geen openstaande registraties</p>
+        </div>
+    {/each}
+</section>
+
 <style>
+
     .section {
         width: 100%;
         display: flex;
         gap: 2rem;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #666;
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+    .back-link:hover {
+        color: #333;
     }
 
     .section--table {
@@ -116,26 +177,22 @@
 
     .table__item--action {
         text-align: right;
+        width: 1%;
+        white-space: nowrap;
     }
 
     .table__item--empty {
         text-align: center;
         color: #999;
         padding: 2rem;
-
-        i {
-            display: block;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: #2e7d32;
-        }
     }
 
-    .table__item--action {
-    text-align: right;
-    width: 1%;
-    white-space: nowrap;
-}
+    .table__item--empty i {
+        display: block;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: #2e7d32;
+    }
 
     .user {
         display: flex;
@@ -154,10 +211,22 @@
         font-weight: 600;
         font-size: 0.85rem;
         color: white;
+        flex-shrink: 0;
     }
 
     .user__name {
         font-weight: 500;
+    }
+
+    .user__info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.1rem;
+    }
+
+    .user__email {
+        font-size: 0.78rem;
+        color: #999;
     }
 
     .actions {
@@ -175,6 +244,7 @@
         cursor: pointer;
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 0.3rem;
         transition: opacity 0.15s ease;
     }
@@ -191,5 +261,82 @@
     .btn--reject {
         background: #fdecea;
         color: #c62828;
+    }
+
+    .btn--full {
+        width: 100%;
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .card-list {
+        display: none;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .card-list__empty {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+        text-align: center;
+        color: #999;
+    }
+
+    .card-list__empty i {
+        font-size: 1.5rem;
+        color: #2e7d32;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .card-list__empty p {
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    .reg-card {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        padding: 1rem;
+    }
+
+    .reg-card__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .reg-card__date {
+        font-size: 0.78rem;
+        color: #999;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .reg-card__actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+
+    .reg-card__actions form {
+        display: contents;
+    }
+
+    @media (max-width: 768px) {
+        .table-wrapper {
+            display: none;
+        }
+
+        .card-list {
+            display: flex;
+        }
     }
 </style>
