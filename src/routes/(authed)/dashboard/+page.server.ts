@@ -11,10 +11,12 @@ export const load: PageServerLoad = async ({ locals }) => {
 
   const { data: clients, error: dbError } = await supabase
     .from("Clients")
-    .select(`*,
+    .select(
+      `*,
         subscriptions (*),
         software (*)
-        `)
+        `,
+    )
     .order("name", { ascending: true });
 
   if (dbError) {
@@ -23,14 +25,13 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 
   const totalClients = clients.length;
-  const activeClients = clients.filter(
-      (c) => c.software?.status).length;
+  const activeClients = clients.filter((c) => c.software?.status).length;
   const inactiveClients = totalClients - activeClients;
   const now = new Date();
   const thisMonth = now.getMonth();
   const thisYear = now.getFullYear();
   const newThisMonth = clients.filter((c) => {
-  const createdAt = new Date(c.created_at);
+    const createdAt = new Date(c.created_at);
     return (
       createdAt.getMonth() === thisMonth && createdAt.getFullYear() === thisYear
     );
@@ -48,10 +49,29 @@ export const load: PageServerLoad = async ({ locals }) => {
     totalClients,
     newThisMonth,
     expiringSoon,
-    inactiveClients
+    inactiveClients,
+  };
+
+  for (const client of clients) {
+    if (client.subscriptions?.expiration_date) {
+      const expirationDate = new Date(client.subscriptions.expiration_date);
+
+      if (now > expirationDate && client.software?.status) {
+        const { error: updateError } = await supabase
+          .from("software")
+          .update({ status: false })
+          .eq("id", client.software.id);
+
+        if (updateError) {
+          console.error("Error updating software status:", updateError);
+        } else {
+          if (client.software) {
+            client.software.status = false;
+          }
+        }
+      }
+    }
   }
 
-  return { clients: clients ?? [],
-          stats
-   };
+  return { clients: clients ?? [], stats };
 };
