@@ -29,8 +29,7 @@
     let initials = getInitials(data.client.name);
 
     function formatDate(dateString: string): string {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('nl-BE', {
+        return new Date(dateString).toLocaleDateString('nl-BE', {
             day: 'numeric',
             month: 'short',
             year: 'numeric',
@@ -63,8 +62,7 @@
             </div>
             <h2 class="modal__title">Delete Client</h2>
             <p class="modal__text">
-                Are you sure you want to delete <strong>{data.client.name}</strong>? This action cannot be
-                undone.
+                Are you sure you want to delete <strong>{data.client.name}</strong>? This action cannot be undone.
             </p>
             <div class="modal__actions">
                 <button class="btn btn--cancel" onclick={() => (showDeleteModal = false)}>Cancel</button>
@@ -76,13 +74,9 @@
                         return async ({ result }) => {
                             if (result.type === 'success') {
                                 showDeleteModal = false;
-                                toastMessage = 'User successfully deleted';
+                                toastMessage = 'Client successfully deleted';
                                 showToast = true;
-                                
-                                setTimeout(() => {
-                                    showToast = false;
-                                    goto('/search');
-                                }, 3000);
+                                setTimeout(() => { showToast = false; goto('/search'); }, 3000);
                             }
                             isDeleting = false;
                             showDeleteModal = false;
@@ -113,8 +107,7 @@
             </div>
             <h2 class="modal__title">Software Uitschakelen</h2>
             <p class="modal__text">
-                Je staat op het punt om de software voor <strong>{data.client.name}</strong> uit te
-                schakelen. Dit kan invloed hebben op hun diensten.
+                Je staat op het punt om de software voor <strong>{data.client.name}</strong> uit te schakelen. Dit kan invloed hebben op hun diensten.
             </p>
             <div class="modal__actions">
                 <button class="btn btn--cancel" onclick={cancelSoftwareChange}>Annuleren</button>
@@ -126,9 +119,7 @@
                         return async ({ result }) => {
                             isUpdating = false;
                             showConfirmModal = false;
-                            if (result.type === 'success') {
-                                disableToggle = pendingSoftwareState;
-                            }
+                            if (result.type === 'success') disableToggle = pendingSoftwareState;
                         };
                     }}
                 >
@@ -152,50 +143,33 @@
         <h1 class="detail-header__name">
             {data.client.name}
             <span
-                class="badge badge--status"
+                class="badge"
                 class:badge--active={data.client.subscriptions?.status === 'Payed'}
                 class:badge--renew={data.client.subscriptions?.status === 'Almost up'}
                 class:badge--inactive={data.client.subscriptions?.status === 'Off'}
-                >{data.client.subscriptions?.status}</span
-            >
+            >{data.client.subscriptions?.status}</span>
             <span
-                class="badge badge--software"
+                class="badge"
                 class:badge--active={disableToggle}
                 class:badge--inactive={!disableToggle}
-            >
-                {disableToggle ? 'Software Aan' : 'Software Uit'}
-            </span>
+            >{disableToggle ? 'Software Aan' : 'Software Uit'}</span>
         </h1>
-        <p class="detail-header__sub">Contact: John Doe</p>
+        <p class="detail-header__sub">Contact: {data.client.contact?.person_firstname} {data.client.contact?.person_lastname}</p>
     </div>
     <div class="detail-header__actions">
-        <a href={`${data.client.id}/edit`} class="btn btn--primary">
-            <i class="fa-solid fa-pen-to-square"></i>
-            Edit Client
+        <a href={`${data.client.id}/edit`} class="btn btn--outline">
+            <i class="fa-solid fa-pen-to-square"></i> Edit
         </a>
-        <button class="btn btn--danger" onclick={() => (showDeleteModal = true)}>
-            <i class="fa-solid fa-trash-can"></i>
-            Delete Client
+        <button class="btn btn--danger-outline" onclick={() => (showDeleteModal = true)}>
+            <i class="fa-solid fa-trash-can"></i> Delete
         </button>
     </div>
 </section>
 
 <nav class="tabs">
-    <button
-        class="tabs__item"
-        class:tabs__item--active={activeTab === 'overview'}
-        onclick={() => (activeTab = 'overview')}>Overview</button
-    >
-    <button
-        class="tabs__item"
-        class:tabs__item--active={activeTab === 'systems'}
-        onclick={() => (activeTab = 'systems')}>Systems</button
-    >
-    <button
-        class="tabs__item"
-        class:tabs__item--active={activeTab === 'notes'}
-        onclick={() => (activeTab = 'notes')}>Notes</button
-    >
+    <button class="tabs__item" class:tabs__item--active={activeTab === 'overview'} onclick={() => (activeTab = 'overview')}>Overview</button>
+    <button class="tabs__item" class:tabs__item--active={activeTab === 'systems'} onclick={() => (activeTab = 'systems')}>Systems</button>
+    <button class="tabs__item" class:tabs__item--active={activeTab === 'notes'} onclick={() => (activeTab = 'notes')}>Notes</button>
 </nav>
 
 {#if activeTab === 'overview'}
@@ -227,21 +201,15 @@
             <div class="detail-card__grid">
                 <div class="detail-card__field">
                     <span class="detail-card__label">Subscription Type</span>
-                    <span class="detail-card__value detail-card__value--highlight"
-                        >{data.client.subscriptions.type}</span
-                    >
+                    <span class="detail-card__value detail-card__value--highlight">{data.client.subscriptions.type}</span>
                 </div>
                 <div class="detail-card__field">
                     <span class="detail-card__label">Software Status</span>
-                    <span class="detail-card__value detail-card__value--green"
-                        >{data.client.subscriptions.status}</span
-                    >
+                    <span class="detail-card__value detail-card__value--green">{data.client.subscriptions.status}</span>
                 </div>
                 <div class="detail-card__field">
                     <span class="detail-card__label">Subscription Price</span>
-                    <span class="detail-card__value detail-card__value--highlight"
-                        >€ {data.client.subscriptions.pricing}</span
-                    >
+                    <span class="detail-card__value detail-card__value--highlight">€ {data.client.subscriptions.pricing}</span>
                 </div>
             </div>
         </div>
@@ -252,7 +220,6 @@
     <div class="detail-content detail-content--single">
         <div class="detail-card detail-card--full">
             <h2 class="detail-card__title">Notes</h2>
-
             {#if notes.length === 0}
                 <p class="no-notes">Nog geen notities voor deze klant.</p>
             {:else}
@@ -265,14 +232,13 @@
                     </div>
                 {/each}
             {/if}
-
             <form
                 method="POST"
                 action="?/saveNote"
                 class="note-input"
                 use:enhance={() => {
                     isSavingNote = true;
-                    return async ({ result, update }) => {
+                    return async ({ result }) => {
                         isSavingNote = false;
                         if (result.type === 'success' && result.data?.note) {
                             notes = [result.data.note, ...notes];
@@ -288,11 +254,7 @@
                     bind:value={noteInput}
                     rows="3"
                 ></textarea>
-                <button
-                    type="submit"
-                    class="btn btn--save"
-                    disabled={isSavingNote || !noteInput.trim()}
-                >
+                <button type="submit" class="btn btn--save" disabled={isSavingNote || !noteInput.trim()}>
                     {isSavingNote ? 'Opslaan...' : 'Save Note'}
                 </button>
             </form>
@@ -315,9 +277,7 @@
                             isUpdating = true;
                             return async ({ result }) => {
                                 isUpdating = false;
-                                if (result.type !== 'success') {
-                                    warningToggle = !warningToggle;
-                                }
+                                if (result.type !== 'success') warningToggle = !warningToggle;
                             };
                         }}
                     >
@@ -333,22 +293,17 @@
                         </label>
                     </form>
                 </div>
-
                 <div class="control__item">
                     <i class="fa-solid fa-code"></i>
                     <span>Software</span>
-
                     <form
                         method="POST"
                         action="?/updateSoftware"
                         use:enhance={() => {
                             isUpdating = true;
-
                             return async ({ result }) => {
                                 isUpdating = false;
-                                if (result.type !== 'success') {
-                                    disableToggle = false;
-                                }
+                                if (result.type !== 'success') disableToggle = false;
                             };
                         }}
                     >
@@ -370,16 +325,9 @@
 {/if}
 
 <style>
-    .modal__icon--danger {
-        background: #ffebee;
-        color: #f44336;
-    }
     .modal-overlay {
         position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        inset: 0;
         background: rgba(0, 0, 0, 0.5);
         display: flex;
         align-items: center;
@@ -401,13 +349,18 @@
         width: 60px;
         height: 60px;
         background: #fff3e0;
+        color: #ff9800;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 1rem;
         font-size: 1.5rem;
-        color: #ff9800;
+    }
+
+    .modal__icon--danger {
+        background: #ffebee;
+        color: #f44336;
     }
 
     .modal__title {
@@ -429,6 +382,20 @@
         justify-content: center;
     }
 
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.25rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
     .btn--cancel {
         background: #f5f5f5;
         color: #666;
@@ -439,16 +406,51 @@
     }
 
     .btn--danger {
-        background: var(--color-secondary);
+        background: #c62828;
         color: white;
     }
 
     .btn--danger:hover {
-        background: color-mix(in srgb, var(--color-secondary) 90%, black 10%);
+        background: #b71c1c;
     }
 
     .btn--danger:disabled {
         background: #ffcdd2;
+        cursor: not-allowed;
+    }
+
+    .btn--outline {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .btn--outline:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn--danger-outline {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .btn--danger-outline:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn--save {
+        background: #4caf50;
+        color: white;
+        align-self: flex-end;
+    }
+
+    .btn--save:hover {
+        background: #388e3c;
+    }
+
+    .btn--save:disabled {
+        background: #a5d6a7;
         cursor: not-allowed;
     }
 
@@ -457,12 +459,12 @@
         align-items: center;
         gap: 0.5rem;
         color: #666;
-        text-decoration: none;
         font-size: 0.9rem;
         margin-bottom: 1rem;
         background: transparent;
         border: none;
         cursor: pointer;
+        text-decoration: none;
     }
 
     .back-link:hover {
@@ -490,7 +492,7 @@
         justify-content: center;
         font-weight: 700;
         font-size: 1.25rem;
-        color: white;
+        flex-shrink: 0;
     }
 
     .detail-header__info {
@@ -512,16 +514,17 @@
         opacity: 0.85;
     }
 
+    .detail-header__actions {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
     .badge {
         padding: 0.2rem 0.6rem;
         border-radius: 0.3rem;
         font-size: 0.75rem;
         font-weight: 600;
-    }
-
-    .badge--status {
-        background: #4caf50;
-        color: white;
     }
 
     .badge--active {
@@ -540,7 +543,6 @@
 
     .tabs {
         display: flex;
-        gap: 0;
         margin-bottom: 1.5rem;
     }
 
@@ -556,7 +558,7 @@
 
     .tabs__item--active {
         color: #333;
-        border-bottom: 2px solid #e91e90;
+        border-bottom-color: #e91e90;
         font-weight: 600;
     }
 
@@ -579,7 +581,6 @@
         background: white;
         border-radius: 0.75rem;
         padding: 1.5rem;
-        max-width: 100%;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
 
@@ -675,9 +676,8 @@
         box-sizing: border-box;
     }
 
-    .btn--save:disabled {
-        background: #a5d6a7;
-        cursor: not-allowed;
+    .note-input__field:focus {
+        border-color: #e91e90;
     }
 
     .no-notes {
@@ -685,40 +685,6 @@
         font-size: 0.9rem;
         text-align: center;
         padding: 2rem;
-    }
-
-    .note-input__field:focus {
-        border-color: #e91e90;
-    }
-
-    .btn {
-        display: inline-block;
-        padding: 0.6rem 1.5rem;
-        border-radius: 0.5rem;
-        border: none;
-        cursor: pointer;
-        font-size: 0.9rem;
-        font-weight: 600;
-        text-decoration: none;
-    }
-
-    .btn--primary {
-        background: #e91e90;
-        color: white;
-    }
-
-    .btn--primary:hover {
-        background: #c2185b;
-    }
-
-    .btn--save {
-        background: #4caf50;
-        color: white;
-        align-self: flex-end;
-    }
-
-    .btn--save:hover {
-        background: #388e3c;
     }
 
     .control {
@@ -741,6 +707,7 @@
         width: 44px;
         height: 24px;
         margin-left: auto;
+        flex-shrink: 0;
     }
 
     .toggle input {
@@ -756,12 +723,9 @@
 
     .toggle__slider {
         position: absolute;
+        inset: 0;
         cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
+        background: #ccc;
         border-radius: 24px;
         transition: 0.3s;
     }
@@ -769,64 +733,85 @@
     .toggle__slider::before {
         content: '';
         position: absolute;
-        height: 18px;
         width: 18px;
+        height: 18px;
         left: 3px;
         bottom: 3px;
-        background-color: white;
+        background: white;
         border-radius: 50%;
         transition: 0.3s;
     }
 
     .toggle input:checked + .toggle__slider {
-        background-color: #e91e90;
+        background: #e91e90;
     }
 
     .toggle input:checked + .toggle__slider::before {
         transform: translateX(20px);
     }
-    .detail-header__actions {
-        margin-left: auto;
+
+    .toast {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 1rem 1.5rem;
+        border-radius: 0.5rem;
         display: flex;
-        gap: 1rem;
         align-items: center;
+        gap: 0.75rem;
+        background: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 2000;
+        font-size: 0.95rem;
+        font-weight: 500;
+        animation: slideUp 0.3s ease;
     }
 
-        .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 1rem 1.5rem;
-    border-radius: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 2000;
-    font-size: 0.95rem;
-    font-weight: 500;
-    animation: slideUp 0.3s ease;
-}
-
-.toast--success {
-    border-left: 4px solid #4caf50;
-    color: #2e7d32;
-}
-
-.toast--success i {
-    color: #4caf50;
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(20px);
+    .toast--success {
+        border-left: 4px solid #4caf50;
+        color: #2e7d32;
     }
-    to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
+
+    .toast--success i {
+        color: #4caf50;
     }
-}
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+        to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+        .detail-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .detail-header__avatar {
+            width: 50px;
+            height: 50px;
+            font-size: 1.1rem;
+        }
+
+        .detail-header__name {
+            font-size: 1.2rem;
+        }
+
+        .detail-header__actions {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .detail-header__actions .btn {
+            justify-content: center;
+        }
+
+        .detail-content {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
 </style>
