@@ -46,7 +46,6 @@
 
 <h2 class="section__title">Bijna Verlopen</h2>
 
-<!-- Desktop table -->
 <section class="section section--table table-wrapper">
     <table class="table">
         <thead class="table__head">

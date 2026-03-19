@@ -45,7 +45,6 @@
     </div>
 </div>
 
-<!-- Desktop table -->
 <section class="section section--table table-wrapper">
     <table class="table">
         <thead class="table__head">
