@@ -229,7 +229,9 @@
                                 {item.software?.status ? 'Actief' : 'Niet-Actief'}
                             </span>
                         </div>
-                        <i class="fa-solid {getIcon(item.type)} results__icon"></i>
+                        <div class="results__type">
+                            <i class="fa-solid {getIcon(item.type)}"></i>
+                        </div>
                     </div>
                 </li>
             {:else}
@@ -453,9 +455,17 @@
     .results__status--active { color: #4caf50; }
     .results__status--inactive { color: #f44336; }
 
-    .results__icon {
-        font-size: 1.5rem;
-        color: #333;
+    .results__type {
+        width: 36px;
+        height: 36px;
+        border-radius: 0.5rem;
+        background: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        font-size: 0.9rem;
+        flex-shrink: 0;
     }
 
 @media (max-width: 768px) {
