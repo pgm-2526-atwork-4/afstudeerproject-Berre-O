@@ -1,15 +1,20 @@
 <script lang="ts">
     import { backButton } from "$lib/utils";
     import { enhance } from "$app/forms";
-    
+    import { goto } from "$app/navigation";
+
     let { data } = $props();
     let activeTab = $state('overview');
     let noteInput = $state('');
     let warningToggle = $state(data.client.software?.warning ?? false);
     let disableToggle = $state(data.client.software?.status ?? false);
     let showConfirmModal = $state(false);
+    let showDeleteModal = $state(false);
+    let showToast = $state(false);
+    let toastMessage = $state('');
     let pendingSoftwareState = $state(false);
     let isUpdating = $state(false);
+    let isDeleting = $state(false);
     let isSavingNote = $state(false);
     let notes = $state(data.client.notes ?? []);
 
@@ -24,8 +29,7 @@
     let initials = getInitials(data.client.name);
 
     function formatDate(dateString: string): string {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('nl-BE', {
+        return new Date(dateString).toLocaleDateString('nl-BE', {
             day: 'numeric',
             month: 'short',
             year: 'numeric',
@@ -34,22 +38,66 @@
         });
     }
 
-function handleSoftwareChange(e: Event) {
-    if (!disableToggle) {
-        disableToggle = true; 
-        pendingSoftwareState = false;
-        showConfirmModal = true;
-    } else {
-        const form = (e.currentTarget as HTMLInputElement).form;
-        if (form) form.requestSubmit();
+    function handleSoftwareChange(e: Event) {
+        if (!disableToggle) {
+            disableToggle = true;
+            pendingSoftwareState = false;
+            showConfirmModal = true;
+        } else {
+            const form = (e.currentTarget as HTMLInputElement).form;
+            if (form) form.requestSubmit();
+        }
     }
-}
 
     function cancelSoftwareChange() {
         showConfirmModal = false;
-
     }
 </script>
+
+{#if showDeleteModal}
+    <div class="modal-overlay" onclick={() => (showDeleteModal = false)}>
+        <div class="modal" onclick={(e) => e.stopPropagation()}>
+            <div class="modal__icon modal__icon--danger">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <h2 class="modal__title">Delete Client</h2>
+            <p class="modal__text">
+                Are you sure you want to delete <strong>{data.client.name}</strong>? This action cannot be undone.
+            </p>
+            <div class="modal__actions">
+                <button class="btn btn--cancel" onclick={() => (showDeleteModal = false)}>Cancel</button>
+                <form
+                    method="POST"
+                    action="?/deleteClient"
+                    use:enhance={() => {
+                        isDeleting = true;
+                        return async ({ result }) => {
+                            if (result.type === 'success') {
+                                showDeleteModal = false;
+                                toastMessage = 'Client successfully deleted';
+                                showToast = true;
+                                setTimeout(() => { showToast = false; goto('/search'); }, 3000);
+                            }
+                            isDeleting = false;
+                            showDeleteModal = false;
+                        };
+                    }}
+                >
+                    <button type="submit" class="btn btn--danger" disabled={isDeleting}>
+                        {isDeleting ? 'Deleting...' : 'Delete'}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{/if}
+
+{#if showToast}
+    <div class="toast toast--success">
+        <i class="fa-solid fa-check-circle"></i>
+        {toastMessage}
+    </div>
+{/if}
 
 {#if showConfirmModal}
     <div class="modal-overlay" onclick={cancelSoftwareChange}>
@@ -59,22 +107,19 @@ function handleSoftwareChange(e: Event) {
             </div>
             <h2 class="modal__title">Software Uitschakelen</h2>
             <p class="modal__text">
-                Je staat op het punt om de software voor <strong>{data.client.name}</strong> uit te schakelen. 
-                Dit kan invloed hebben op hun diensten.
+                Je staat op het punt om de software voor <strong>{data.client.name}</strong> uit te schakelen. Dit kan invloed hebben op hun diensten.
             </p>
             <div class="modal__actions">
                 <button class="btn btn--cancel" onclick={cancelSoftwareChange}>Annuleren</button>
-                <form 
-                    method="POST" 
+                <form
+                    method="POST"
                     action="?/updateSoftware"
                     use:enhance={() => {
                         isUpdating = true;
                         return async ({ result }) => {
                             isUpdating = false;
                             showConfirmModal = false;
-                            if (result.type === 'success') {
-                                disableToggle = pendingSoftwareState;
-                            }
+                            if (result.type === 'success') disableToggle = pendingSoftwareState;
                         };
                     }}
                 >
@@ -97,19 +142,34 @@ function handleSoftwareChange(e: Event) {
     <div class="detail-header__info">
         <h1 class="detail-header__name">
             {data.client.name}
-            <span class="badge badge--status" class:badge--active={data.client.subscriptions.status === "Payed"} class:badge--renew={data.client.subscriptions.status === "Almost up"} class:badge--inactive={data.client.subscriptions.status === "Off"}>{data.client.subscriptions.status}</span>
-            <span class="badge badge--software" class:badge--active={disableToggle} class:badge--inactive={!disableToggle}>
-                {disableToggle ? 'Software Aan' : 'Software Uit'}
-            </span>
+            <span
+                class="badge"
+                class:badge--active={data.client.subscriptions?.status === 'Payed'}
+                class:badge--renew={data.client.subscriptions?.status === 'Almost up'}
+                class:badge--inactive={data.client.subscriptions?.status === 'Off'}
+            >{data.client.subscriptions?.status}</span>
+            <span
+                class="badge"
+                class:badge--active={disableToggle}
+                class:badge--inactive={!disableToggle}
+            >{disableToggle ? 'Software Aan' : 'Software Uit'}</span>
         </h1>
-        <p class="detail-header__sub">Contact: John Doe</p>
+        <p class="detail-header__sub">Contact: {data.client.contact?.person_firstname} {data.client.contact?.person_lastname}</p>
+    </div>
+    <div class="detail-header__actions">
+        <a href={`${data.client.id}/edit`} class="btn btn--outline">
+            <i class="fa-solid fa-pen-to-square"></i> Edit
+        </a>
+        <button class="btn btn--danger-outline" onclick={() => (showDeleteModal = true)}>
+            <i class="fa-solid fa-trash-can"></i> Delete
+        </button>
     </div>
 </section>
 
 <nav class="tabs">
-    <button class="tabs__item" class:tabs__item--active={activeTab === 'overview'} onclick={() => activeTab = 'overview'}>Overview</button>
-    <button class="tabs__item" class:tabs__item--active={activeTab === 'systems'} onclick={() => activeTab = 'systems'}>Systems</button>
-    <button class="tabs__item" class:tabs__item--active={activeTab === 'notes'} onclick={() => activeTab = 'notes'}>Notes</button>
+    <button class="tabs__item" class:tabs__item--active={activeTab === 'overview'} onclick={() => (activeTab = 'overview')}>Overview</button>
+    <button class="tabs__item" class:tabs__item--active={activeTab === 'systems'} onclick={() => (activeTab = 'systems')}>Systems</button>
+    <button class="tabs__item" class:tabs__item--active={activeTab === 'notes'} onclick={() => (activeTab = 'notes')}>Notes</button>
 </nav>
 
 {#if activeTab === 'overview'}
@@ -154,14 +214,12 @@ function handleSoftwareChange(e: Event) {
             </div>
         </div>
     </div>
-
 {/if}
 
 {#if activeTab === 'notes'}
     <div class="detail-content detail-content--single">
         <div class="detail-card detail-card--full">
             <h2 class="detail-card__title">Notes</h2>
-
             {#if notes.length === 0}
                 <p class="no-notes">Nog geen notities voor deze klant.</p>
             {:else}
@@ -174,14 +232,13 @@ function handleSoftwareChange(e: Event) {
                     </div>
                 {/each}
             {/if}
-            
-            <form 
-                method="POST" 
+            <form
+                method="POST"
                 action="?/saveNote"
                 class="note-input"
                 use:enhance={() => {
                     isSavingNote = true;
-                    return async ({ result, update }) => {
+                    return async ({ result }) => {
                         isSavingNote = false;
                         if (result.type === 'success' && result.data?.note) {
                             notes = [result.data.note, ...notes];
@@ -197,11 +254,7 @@ function handleSoftwareChange(e: Event) {
                     bind:value={noteInput}
                     rows="3"
                 ></textarea>
-                <button 
-                    type="submit"
-                    class="btn btn--save" 
-                    disabled={isSavingNote || !noteInput.trim()}
-                >
+                <button type="submit" class="btn btn--save" disabled={isSavingNote || !noteInput.trim()}>
                     {isSavingNote ? 'Opslaan...' : 'Save Note'}
                 </button>
             </form>
@@ -217,61 +270,54 @@ function handleSoftwareChange(e: Event) {
                 <div class="control__item">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span>Warning</span>
-                    <form 
-                        method="POST" 
+                    <form
+                        method="POST"
                         action="?/updateWarning"
                         use:enhance={() => {
                             isUpdating = true;
                             return async ({ result }) => {
                                 isUpdating = false;
-                                if (result.type !== 'success') {
-                                    warningToggle = !warningToggle;
-                                }
+                                if (result.type !== 'success') warningToggle = !warningToggle;
                             };
                         }}
                     >
                         <input type="hidden" name="warning" value={warningToggle.toString()} />
                         <label class="toggle">
-                            <input 
-                                type="checkbox" 
-                                bind:checked={warningToggle} 
-                                onchange={(e) => e.currentTarget.form?.requestSubmit()} 
+                            <input
+                                type="checkbox"
+                                bind:checked={warningToggle}
+                                onchange={(e) => e.currentTarget.form?.requestSubmit()}
                                 disabled={isUpdating}
                             />
                             <span class="toggle__slider"></span>
                         </label>
                     </form>
                 </div>
-
                 <div class="control__item">
                     <i class="fa-solid fa-code"></i>
                     <span>Software</span>
-                    
-                <form 
-                    method="POST" 
-                    action="?/updateSoftware"
-                    use:enhance={() => {
-                        isUpdating = true;
-                        
-                        return async ({ result }) => {
-                            isUpdating = false;
-                            if (result.type !== 'success') {
-                                disableToggle = false;
-                            }
-                        };
-                    }}
-                >
-                    <input type="hidden" name="status" value={disableToggle.toString()} />
-                    <label class="toggle">
-                        <input 
-                            type="checkbox" 
-                            bind:checked={disableToggle} 
-                            onchange={handleSoftwareChange}
-                            disabled={isUpdating} 
-                        />
-                        <span class="toggle__slider"></span>
-                    </label>
-                </form>
+                    <form
+                        method="POST"
+                        action="?/updateSoftware"
+                        use:enhance={() => {
+                            isUpdating = true;
+                            return async ({ result }) => {
+                                isUpdating = false;
+                                if (result.type !== 'success') disableToggle = false;
+                            };
+                        }}
+                    >
+                        <input type="hidden" name="status" value={disableToggle.toString()} />
+                        <label class="toggle">
+                            <input
+                                type="checkbox"
+                                bind:checked={disableToggle}
+                                onchange={handleSoftwareChange}
+                                disabled={isUpdating}
+                            />
+                            <span class="toggle__slider"></span>
+                        </label>
+                    </form>
                 </div>
             </div>
         </div>
@@ -281,10 +327,7 @@ function handleSoftwareChange(e: Event) {
 <style>
     .modal-overlay {
         position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        inset: 0;
         background: rgba(0, 0, 0, 0.5);
         display: flex;
         align-items: center;
@@ -306,13 +349,18 @@ function handleSoftwareChange(e: Event) {
         width: 60px;
         height: 60px;
         background: #fff3e0;
+        color: #ff9800;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 1rem;
         font-size: 1.5rem;
-        color: #ff9800;
+    }
+
+    .modal__icon--danger {
+        background: #ffebee;
+        color: #f44336;
     }
 
     .modal__title {
@@ -334,6 +382,20 @@ function handleSoftwareChange(e: Event) {
         justify-content: center;
     }
 
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.25rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
     .btn--cancel {
         background: #f5f5f5;
         color: #666;
@@ -344,16 +406,51 @@ function handleSoftwareChange(e: Event) {
     }
 
     .btn--danger {
-        background: var(--color-secondary);
+        background: #c62828;
         color: white;
     }
 
     .btn--danger:hover {
-        background: color-mix(in srgb, var(--color-secondary) 90%, black 10%);
+        background: #b71c1c;
     }
 
     .btn--danger:disabled {
         background: #ffcdd2;
+        cursor: not-allowed;
+    }
+
+    .btn--outline {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .btn--outline:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn--danger-outline {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .btn--danger-outline:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn--save {
+        background: #4caf50;
+        color: white;
+        align-self: flex-end;
+    }
+
+    .btn--save:hover {
+        background: #388e3c;
+    }
+
+    .btn--save:disabled {
+        background: #a5d6a7;
         cursor: not-allowed;
     }
 
@@ -362,12 +459,12 @@ function handleSoftwareChange(e: Event) {
         align-items: center;
         gap: 0.5rem;
         color: #666;
-        text-decoration: none;
         font-size: 0.9rem;
         margin-bottom: 1rem;
         background: transparent;
         border: none;
         cursor: pointer;
+        text-decoration: none;
     }
 
     .back-link:hover {
@@ -395,7 +492,7 @@ function handleSoftwareChange(e: Event) {
         justify-content: center;
         font-weight: 700;
         font-size: 1.25rem;
-        color: white;
+        flex-shrink: 0;
     }
 
     .detail-header__info {
@@ -417,16 +514,17 @@ function handleSoftwareChange(e: Event) {
         opacity: 0.85;
     }
 
+    .detail-header__actions {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
     .badge {
         padding: 0.2rem 0.6rem;
         border-radius: 0.3rem;
         font-size: 0.75rem;
         font-weight: 600;
-    }
-
-    .badge--status {
-        background: #4caf50;
-        color: white;
     }
 
     .badge--active {
@@ -445,7 +543,6 @@ function handleSoftwareChange(e: Event) {
 
     .tabs {
         display: flex;
-        gap: 0;
         margin-bottom: 1.5rem;
     }
 
@@ -461,7 +558,7 @@ function handleSoftwareChange(e: Event) {
 
     .tabs__item--active {
         color: #333;
-        border-bottom: 2px solid #e91e90;
+        border-bottom-color: #e91e90;
         font-weight: 600;
     }
 
@@ -484,7 +581,6 @@ function handleSoftwareChange(e: Event) {
         background: white;
         border-radius: 0.75rem;
         padding: 1.5rem;
-        max-width: 100%;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
 
@@ -580,9 +676,8 @@ function handleSoftwareChange(e: Event) {
         box-sizing: border-box;
     }
 
-    .btn--save:disabled {
-        background: #a5d6a7;
-        cursor: not-allowed;
+    .note-input__field:focus {
+        border-color: #e91e90;
     }
 
     .no-notes {
@@ -590,40 +685,6 @@ function handleSoftwareChange(e: Event) {
         font-size: 0.9rem;
         text-align: center;
         padding: 2rem;
-    }
-
-    .note-input__field:focus {
-        border-color: #e91e90;
-    }
-
-    .btn {
-        display: inline-block;
-        padding: 0.6rem 1.5rem;
-        border-radius: 0.5rem;
-        border: none;
-        cursor: pointer;
-        font-size: 0.9rem;
-        font-weight: 600;
-        text-decoration: none;
-    }
-
-    .btn--primary {
-        background: #e91e90;
-        color: white;
-    }
-
-    .btn--primary:hover {
-        background: #c2185b;
-    }
-
-    .btn--save {
-        background: #4caf50;
-        color: white;
-        align-self: flex-end;
-    }
-
-    .btn--save:hover {
-        background: #388e3c;
     }
 
     .control {
@@ -646,6 +707,7 @@ function handleSoftwareChange(e: Event) {
         width: 44px;
         height: 24px;
         margin-left: auto;
+        flex-shrink: 0;
     }
 
     .toggle input {
@@ -661,12 +723,9 @@ function handleSoftwareChange(e: Event) {
 
     .toggle__slider {
         position: absolute;
+        inset: 0;
         cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
+        background: #ccc;
         border-radius: 24px;
         transition: 0.3s;
     }
@@ -674,20 +733,85 @@ function handleSoftwareChange(e: Event) {
     .toggle__slider::before {
         content: '';
         position: absolute;
-        height: 18px;
         width: 18px;
+        height: 18px;
         left: 3px;
         bottom: 3px;
-        background-color: white;
+        background: white;
         border-radius: 50%;
         transition: 0.3s;
     }
 
     .toggle input:checked + .toggle__slider {
-        background-color: #e91e90;
+        background: #e91e90;
     }
 
     .toggle input:checked + .toggle__slider::before {
         transform: translateX(20px);
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 1rem 1.5rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 2000;
+        font-size: 0.95rem;
+        font-weight: 500;
+        animation: slideUp 0.3s ease;
+    }
+
+    .toast--success {
+        border-left: 4px solid #4caf50;
+        color: #2e7d32;
+    }
+
+    .toast--success i {
+        color: #4caf50;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+        to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+        .detail-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .detail-header__avatar {
+            width: 50px;
+            height: 50px;
+            font-size: 1.1rem;
+        }
+
+        .detail-header__name {
+            font-size: 1.2rem;
+        }
+
+        .detail-header__actions {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .detail-header__actions .btn {
+            justify-content: center;
+        }
+
+        .detail-content {
+            flex-direction: column;
+            gap: 1rem;
+        }
     }
 </style>

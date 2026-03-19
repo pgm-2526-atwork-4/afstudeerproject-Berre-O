@@ -19,11 +19,19 @@
             year: 'numeric'
         });
     }
+
+    function navigateToUser(user: any) {
+        if (user.status === "approved" || user.status === "rejected") {
+            goto(`/users/${user.id}`);
+        } else {
+            goto(`/users/applications`);
+        }
+    }
 </script>
 
-    <h1>Users</h1>
+<h1>Users</h1>
 
-<section class="section section--table">
+<section class="section section--table table-wrapper">
     <table class="table">
         <thead class="table__head">
             <tr class="table__row">
@@ -35,14 +43,14 @@
         </thead>
         <tbody>
             {#each data.clients as user}
-                <tr class="table__row table__row--clickable">
-                    <td 
-                    class="table__item"
-                     onclick={() => goto(`/users/${user.id}`)}
-                    onkeydown={(e) => e.key === 'Enter' && goto(`/users/${user.id}`)}
+                <tr
+                    class="table__row table__row--clickable"
+                    onclick={() => navigateToUser(user)}
+                    onkeydown={(e) => e.key === 'Enter' && navigateToUser(user)}
                     role="link"
                     tabindex="0"
-                    >
+                >
+                    <td class="table__item">
                         <div class="user">
                             <div class="user__avatar">{getInitials(user.name)}</div>
                             <span class="user__name">{user.name ?? 'Unknown'}</span>
@@ -69,6 +77,41 @@
         </tbody>
     </table>
 </section>
+
+<section class="card-list">
+    {#each data.clients as user}
+        <div
+            class="user-card"
+            onclick={() => navigateToUser(user)}
+            onkeydown={(e) => e.key === 'Enter' && navigateToUser(user)}
+            role="link"
+            tabindex="0"
+        >
+            <div class="user-card__header">
+                <div class="user">
+                    <div class="user__avatar">{getInitials(user.name)}</div>
+                    <span class="user__name">{user.name ?? 'Unknown'}</span>
+                </div>
+                <div class="user-card__badges">
+                    <span class="badge" class:badge--admin={user.admin} class:badge--user={!user.admin}>
+                        {user.admin ? 'Admin' : 'User'}
+                    </span>
+                    <span class="badge" class:badge--admin={user.status === 'approved'} class:badge--user={user.status === 'pending'}>
+                        {user.status}
+                    </span>
+                </div>
+            </div>
+            <div class="user-card__footer">
+                <span class="user-card__label">Joined</span>
+                <span class="user-card__date">{formatDate(user.created_at)}</span>
+            </div>
+        </div>
+    {/each}
+    {#if data.clients.length === 0}
+        <p class="card-list__empty">No users found</p>
+    {/if}
+</section>
+
 <div class="btn__wrapper">
     <a href="/users/applications" class="btn btn--primary">Applications</a>
 </div>
@@ -105,13 +148,11 @@
         font-size: 14px;
         color: #444;
     }
-    
+
     .table__row--clickable {
         cursor: pointer;
         transition: background-color 0.2s ease;
-
     }
-
 
     .table__row--clickable:hover {
         background-color: #f9fafb;
@@ -126,10 +167,6 @@
         border-bottom: none;
         color: #333;
         font-weight: 600;
-    }
-
-    .table__item--action {
-        text-align: right;
     }
 
     .table__item--empty {
@@ -155,6 +192,7 @@
         font-weight: 600;
         font-size: 0.85rem;
         color: white;
+        flex-shrink: 0;
     }
 
     .user__name {
@@ -178,11 +216,11 @@
         color: #666;
     }
 
-	.btn {
-		background-color: transparent;
-		border: none;
-		cursor: pointer;
-	}
+    .btn {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+    }
 
     .btn--primary {
         color: var(--color-primary);
@@ -193,10 +231,85 @@
         align-items: center;
         gap: 0.5rem;
         border-radius: 0.5rem;
+        text-decoration: none;
     }
 
     .btn__wrapper {
         display: flex;
-        padding: 1rem 0rem;
+        padding: 1rem 0;
+    }
+
+    .card-list {
+        display: none;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .card-list__empty {
+        text-align: center;
+        color: #999;
+        font-size: 0.9rem;
+        padding: 2rem 0;
+    }
+
+    .user-card {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        padding: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .user-card:hover {
+        background-color: #f9fafb;
+    }
+
+    .user-card:focus {
+        outline: 2px solid #2563eb;
+        outline-offset: -2px;
+    }
+
+    .user-card__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .user-card__badges {
+        display: flex;
+        gap: 0.4rem;
+        flex-shrink: 0;
+    }
+
+    .user-card__footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+        color: #444;
+    }
+
+    .user-card__label {
+        color: #999;
+        font-weight: 500;
+    }
+
+    .user-card__date {
+        color: #444;
+    }
+
+    @media (max-width: 768px) {
+        .table-wrapper {
+            display: none;
+        }
+
+        .card-list {
+            display: flex;
+        }
     }
 </style>

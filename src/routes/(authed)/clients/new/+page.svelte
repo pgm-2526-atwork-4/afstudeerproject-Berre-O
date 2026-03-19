@@ -17,6 +17,7 @@
         phone: form?.data?.phone ?? '',
         adres: form?.data?.adres ?? '',
         sub_type: form?.data?.sub_type ?? '',
+        sub_price: form?.data?.sub_price ?? '',
         sub_status: form?.data?.sub_status ?? 'Payed',
         start_date: form?.data?.start_date ?? '',
         expiration_date: form?.data?.expiration_date ?? '',
@@ -64,6 +65,9 @@
         
         if (!formData.sub_type) {
             errors.sub_type = 'Subscription type is required';
+        }
+        if (!formData.sub_price) {
+            errors.sub_price = 'Subscription price is required';
         }
         if (!formData.start_date) {
             errors.start_date = 'Start date is required';
@@ -153,6 +157,7 @@
         <input type="hidden" name="phone" value={formData.phone} />
         <input type="hidden" name="adres" value={formData.adres} />
         <input type="hidden" name="sub_type" value={formData.sub_type} />
+        <input type="hidden" name="sub_price" value={formData.sub_price} />
         <input type="hidden" name="sub_status" value={formData.sub_status} />
         <input type="hidden" name="start_date" value={formData.start_date} />
         <input type="hidden" name="expiration_date" value={formData.expiration_date} />
@@ -231,6 +236,11 @@
                                 <option value="Trial">Trial</option>
                             </select>
                             {#if errors.sub_type}<span class="field__error">{errors.sub_type}</span>{/if}
+                        </div>
+                        <div class="field">
+                            <label for="price">Pricing</label>
+                            <input type="text" id="price" placeholder="e.g. € 150" bind:value={formData.sub_price} />
+                            {#if errors.sub_price}<span class="field__error">{errors.sub_price}</span>{/if}
                         </div>
                         <div class="field">
                             <label for="sub_status">Status</label>
@@ -531,4 +541,32 @@
             grid-template-columns: 1fr;
         }
     }
+
+    @media (max-width: 600px) {
+    .step__label {
+        display: none;
+    }
+
+    .step-indicator__line {
+        width: 2rem;
+    }
+
+    .field-row {
+        grid-template-columns: 1fr;
+    }
+
+    .form-section--full {
+        max-width: unset;
+    }
+
+    .actions {
+        flex-wrap: wrap;
+    }
+
+    .actions .btn--primary,
+    .actions .btn--secondary {
+        flex: 1;
+        justify-content: center;
+    }
+}
 </style>

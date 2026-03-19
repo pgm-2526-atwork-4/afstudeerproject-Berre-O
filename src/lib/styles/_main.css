@@ -1,5 +1,9 @@
 @import url("./_variables.css");
 
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
 html,
 body {
   height: 100vh;

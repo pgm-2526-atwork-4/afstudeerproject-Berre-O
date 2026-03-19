@@ -26,8 +26,6 @@ export const load: PageServerLoad = async (event) => {
     throw error(500, "Error fetching logs");
   }
 
-  console.log(logs)
-
   const allLogs = logs ?? [];
   const totalPages = Math.ceil(allLogs.length / perPage);
   const start = (currentPage - 1) * perPage;

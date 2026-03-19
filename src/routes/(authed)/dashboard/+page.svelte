@@ -45,7 +45,8 @@
 </section>
 
 <h2 class="section__title">Bijna Verlopen</h2>
-<section class="section section--table">
+
+<section class="section section--table table-wrapper">
     <table class="table">
         <thead class="table__head">
             <tr class="table__row">
@@ -82,6 +83,45 @@
             {/each}
         </tbody>
     </table>
+</section>
+
+<section class="card-list">
+    {#each data.stats.expiringSoon as client (client.id)}
+    <div
+        class="client-card"
+        onclick={() => goto(`/search/${client.id}`)}
+        onkeydown={(e) => e.key === 'Enter' && goto(`/search/${client.id}`)}
+        role="link"
+        tabindex="0"
+    >
+        <div class="client-card__header">
+            <span class="client-card__name">{client.name}</span>
+            <span class="client-card__type">{client.type}</span>
+        </div>
+        <div class="client-card__body">
+            <div class="client-card__row">
+                <span class="client-card__label">Start datum</span>
+                <span>{client.subscriptions?.start_date ? new Date(client.subscriptions.start_date).toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : '-'}</span>
+            </div>
+            <div class="client-card__row">
+                <span class="client-card__label">Verval datum</span>
+                <span>{client.subscriptions?.expiration_date ? new Date(client.subscriptions.expiration_date).toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : '-'}</span>
+            </div>
+            <div class="client-card__row">
+                <span class="client-card__label">Status</span>
+                <div class="status"><span class="state state--yellow"></span>{client.subscriptions?.status}</div>
+            </div>
+            <div class="client-card__row">
+                <span class="client-card__label">Software</span>
+                <div class="icon" class:icon--active={client.software?.status} class:icon--inactive={!client.software?.status}><span>⏻</span>{client.software?.status ? ' Actief' : ' Niet-Actief'}</div>
+            </div>
+            <div class="client-card__row">
+                <span class="client-card__label">Ondernemingsnr.</span>
+                <span>{client.company_number}</span>
+            </div>
+        </div>
+    </div>
+    {/each}
 </section>
 
 <style>
@@ -201,9 +241,84 @@
         }
     }
 
+    .card-list {
+        display: none;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .client-card {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        padding: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .client-card:hover {
+        background-color: #f9fafb;
+    }
+
+    .client-card:focus {
+        outline: 2px solid #2563eb;
+        outline-offset: -2px;
+    }
+
+    .client-card__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .client-card__name {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #333;
+    }
+
+    .client-card__type {
+        font-size: 0.8rem;
+        color: #999;
+        background: #f5f5f5;
+        padding: 0.2rem 0.5rem;
+        border-radius: 0.375rem;
+    }
+
+    .client-card__body {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .client-card__row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+        color: #444;
+    }
+
+    .client-card__label {
+        color: #999;
+        font-weight: 500;
+    }
+
     @media (max-width: 1024px) {
         .section--boxes {
             grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .table-wrapper {
+            display: none;
+        }
+        .card-list {
+            display: flex;
         }
     }
 
