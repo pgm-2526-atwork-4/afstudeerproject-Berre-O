@@ -34,6 +34,8 @@
     }
 </script>
 
+{#if data.session && data.profile?.status !== "rejected"}
+
 <header class="header">
     <div class="header__left">
         {#if data.session && data.profile?.status === "approved"}
@@ -60,6 +62,8 @@
     </a>
     {/if}
 </header>
+
+{/if}
 
 {#if data.session && data.profile?.status === "approved"}
 <div class="devider">
@@ -319,6 +323,7 @@
             height: 100%;
             transform: translateX(-100%);
             width: 250px;
+            box-sizing: border-box;
         }
 
         .aside--open {
