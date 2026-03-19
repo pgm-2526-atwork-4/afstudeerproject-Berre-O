@@ -1,5 +1,6 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
+    import { backButton } from '$lib/utils.ts';
 
     let { data } = $props();
 
@@ -20,6 +21,10 @@
         });
     }
 </script>
+
+<button use:backButton class="back-link">
+    <i class="fa-solid fa-arrow-left"></i> Back to Users
+</button>
 
 <h1>Registraties</h1>
 
@@ -114,10 +119,28 @@
 </section>
 
 <style>
+
     .section {
         width: 100%;
         display: flex;
         gap: 2rem;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #666;
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+    .back-link:hover {
+        color: #333;
     }
 
     .section--table {
