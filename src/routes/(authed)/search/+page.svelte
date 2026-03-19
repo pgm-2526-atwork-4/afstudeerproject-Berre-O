@@ -8,6 +8,7 @@
     let activeFilter = $state<string | null>(null);
     let typeFilter = $state<string | null>(null);
     let typeDropdownOpen = $state(false);
+    let showMap = $state(false);
     let mapContainer: HTMLDivElement;
     let map: L.Map | null = null;
     let leaflet: typeof L | null = null;
@@ -21,13 +22,13 @@
             const query = searchValue.toLowerCase();
             items = items.filter(
                 (item) =>
-                    item.name?.toLowerCase().includes(query) || item.type?.toLowerCase().includes(query)
+                    item.name?.toLowerCase().includes(query) ||
+                    item.type?.toLowerCase().includes(query)
             );
         }
 
         if (activeFilter === 'active') items = items.filter((i) => i.software?.status === true);
         if (activeFilter === 'inactive') items = items.filter((i) => i.software?.status === false);
-
         if (typeFilter) items = items.filter((i) => i.type === typeFilter);
 
         return items;
@@ -38,8 +39,7 @@
     }
 
     function toggleActive() {
-        if (activeFilter === 'active') activeFilter = null;
-        else activeFilter = 'active';
+        activeFilter = activeFilter === 'active' ? null : 'active';
     }
 
     function selectType(type: string | null) {
@@ -49,16 +49,11 @@
 
     function getIcon(type: string | null | undefined) {
         switch (type) {
-            case 'Restaurant':
-                return 'fa-utensils';
-            case 'Café':
-                return 'fa-mug-hot';
-            case 'Bar':
-                return 'fa-martini-glass';
-            case 'Hotel':
-                return 'fa-hotel';
-            default:
-                return 'fa-store';
+            case 'Restaurant': return 'fa-utensils';
+            case 'Café': return 'fa-mug-hot';
+            case 'Bar': return 'fa-martini-glass';
+            case 'Hotel': return 'fa-hotel';
+            default: return 'fa-store';
         }
     }
 
@@ -112,7 +107,6 @@
 
             marker.on('mouseover', () => marker.openPopup());
             marker.on('mouseleave', () => marker.closePopup());
-
             marker.on('click', () => goto(`/search/${client.id}`));
             marker.addTo(map!);
             bounds.push([client.lat, client.lng]);
@@ -141,6 +135,12 @@
             updateMapMarkers();
         }
     });
+
+    $effect(() => {
+        if (map) {
+            setTimeout(() => map!.invalidateSize(), 10);
+        }
+    });
 </script>
 
 <svelte:head>
@@ -150,17 +150,30 @@
 <h1>Search</h1>
 
 <div class="search-layout">
-    <div class="search-layout__left">
-        <div class="search-bar">
-            <input
-                type="text"
-                class="search-bar__input"
-                placeholder="Zoeken..."
-                value={searchValue}
-                oninput={handleInput}
-            />
-            <button class="search-bar__btn">
-                <i class="fa-solid fa-magnifying-glass"></i>
+    <div class="search-layout__left" class:search-layout__left--map={showMap}>
+        <div class="search-top">
+            <div class="search-bar">
+                <input
+                    type="text"
+                    class="search-bar__input"
+                    placeholder="Zoeken..."
+                    value={searchValue}
+                    oninput={handleInput}
+                />
+                <button class="search-bar__btn">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+
+            <button
+                class="map-toggle"
+                onclick={() => {
+                    showMap = !showMap;
+                    setTimeout(() => map?.invalidateSize(), 50);
+                }}
+                aria-label={showMap ? 'Lijst tonen' : 'Kaart tonen'}
+            >
+                <i class="fa-solid {showMap ? 'fa-list' : 'fa-map-location-dot'}"></i>
             </button>
         </div>
 
@@ -187,15 +200,15 @@
                             <button
                                 class="filter-dropdown__item"
                                 class:filter-dropdown__item--active={typeFilter === type}
-                                onclick={() => selectType(type)}>{type}</button
-                            >
+                                onclick={() => selectType(type)}
+                            >{type}</button>
                         {/each}
                     </div>
                 {/if}
             </div>
         </div>
 
-        <ul class="results">
+        <ul class="results" class:results--hidden={showMap}>
             {#each getFilteredItems() as item (item.id)}
                 <li class="results__item">
                     <div
@@ -227,17 +240,14 @@
             {/each}
         </ul>
     </div>
-
-    <div class="search-layout__right">
-        <div class="map" bind:this={mapContainer}></div>
-    </div>
+<div class="map-container" bind:this={mapContainer}></div>
 </div>
 
 <style>
     .search-layout {
         display: flex;
         gap: 2rem;
-        height: calc(70vh);
+        height: 70vh;
     }
 
     .search-layout__left {
@@ -248,11 +258,21 @@
         min-width: 300px;
     }
 
-    .search-layout__right {
+    .map-container {
         flex: 1;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-top {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
     }
 
     .search-bar {
+        flex: 1;
         display: flex;
         align-items: center;
         background: var(--color-primary);
@@ -277,6 +297,18 @@
         cursor: pointer;
         color: #333;
         font-size: 1.1rem;
+    }
+
+    .map-toggle {
+        display: none;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 0.5rem;
+        background: white;
+        cursor: pointer;
+        font-size: 1rem;
+        color: #333;
+        flex-shrink: 0;
     }
 
     .filters {
@@ -351,6 +383,7 @@
         overflow-y: auto;
         border-radius: 0.5rem;
         overflow-x: hidden;
+        flex: 1;
     }
 
     .results__item {
@@ -416,24 +449,35 @@
         gap: 0.3rem;
     }
 
-    .results__status--active {
-        color: #4caf50;
-    }
-
-    .results__status--inactive {
-        color: #f44336;
-    }
+    .results__status--active { color: #4caf50; }
+    .results__status--inactive { color: #f44336; }
 
     .results__icon {
         font-size: 1.5rem;
         color: #333;
     }
 
-    .map {
-        width: 100%;
-        height: 100%;
-        border-radius: 0.5rem;
-        overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+@media (max-width: 768px) {
+    .search-layout {
+        flex-direction: column;
+        height: auto;
     }
+
+    .search-layout__left {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .map-container {
+        display: none;
+    }
+
+    .map-toggle {
+        display: none;
+    }
+
+    .results--hidden {
+        display: flex;
+    }
+}
 </style>
