@@ -19,19 +19,19 @@
 </script>
 
 <button use:backButton class="back-link">
-    <i class="fa-solid fa-arrow-left"></i> Back
+    <i class="fa-solid fa-arrow-left"></i> Terug
 </button>
 
 <div class="edit-container">
     <div class="edit-header">
-        <h1>Edit Client</h1>
-        <p class="edit-header__sub">Update {data.client.name}'s information</p>
+        <h1>Klant bijwerken</h1>
+        <p class="edit-header__sub">Informatie van {data.client.name} bijwerken</p>
     </div>
 
     {#if showSuccessMessage}
         <div class="alert alert--success">
             <i class="fa-solid fa-check-circle"></i>
-            Client information updated successfully
+            Klantinformatie succesvol bijgewerkt
         </div>
     {/if}
 
@@ -51,7 +51,7 @@
         }}
     >
         <div class="form-group">
-            <label for="name" class="form-label">Company Name *</label>
+            <label for="name" class="form-label">Bedrijfsnaam *</label>
             <input
                 type="text"
                 id="name"
@@ -63,7 +63,7 @@
         </div>
 
         <div class="form-group">
-            <label for="company_number" class="form-label">KVK Number *</label>
+            <label for="company_number" class="form-label">Ondernemings-Nummer *</label>
             <input
                 type="text"
                 id="company_number"
@@ -75,7 +75,7 @@
         </div>
 
         <div class="form-group">
-            <label for="email" class="form-label">Email *</label>
+            <label for="email" class="form-label">E-mail *</label>
             <input
                 type="email"
                 id="email"
@@ -87,7 +87,7 @@
         </div>
 
         <div class="form-group">
-            <label for="phone" class="form-label">Phone *</label>
+            <label for="phone" class="form-label">Telefoon *</label>
             <input
                 type="tel"
                 id="phone"
@@ -99,7 +99,7 @@
         </div>
 
         <div class="form-group">
-            <label for="adres" class="form-label">Address *</label>
+            <label for="adres" class="form-label">Adres *</label>
             <textarea
                 id="adres"
                 name="adres"
@@ -111,23 +111,23 @@
         </div>
 
         <div class="form-section">
-            <h3 class="form-section__title">Subscription Information</h3>
+            <h3 class="form-section__title">Abonnement informatie</h3>
             
             <div class="form-group">
-                <label for="subscription_type" class="form-label">Subscription Type *</label>
+                <label for="subscription_type" class="form-label">Abonnement Type *</label>
                 <input
                     type="text"
                     id="subscription_type"
                     name="subscription_type"
                     class="form-input"
                     bind:value={formData.subscription_type}
-                    placeholder="e.g., Basic, Premium"
+                    placeholder="e.g., Monthly, Yearly"
                     required
                 />
             </div>
 
             <div class="form-group">
-                <label for="subscription_status" class="form-label">Subscription Status *</label>
+                <label for="subscription_status" class="form-label">Abonnement Status *</label>
                 <select
                     id="subscription_status"
                     name="subscription_status"
@@ -135,14 +135,14 @@
                     bind:value={formData.subscription_status}
                     required
                 >
-                    <option value="Off">Off</option>
-                    <option value="Payed">Payed</option>
-                    <option value="Almost up">Almost up</option>
+                    <option value="Off">Uit</option>
+                    <option value="Payed">Betaald</option>
+                    <option value="Almost up">Niet-betaald</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="subscription_pricing" class="form-label">Subscription Price (€) *</label>
+                <label for="subscription_pricing" class="form-label">Abonnement Prijs (€) *</label>
                 <input
                     type="number"
                     id="subscription_pricing"
@@ -158,7 +158,7 @@
 
         <div class="form-actions">
             <button type="submit" class="btn btn--primary" disabled={isSubmitting}>
-                {isSubmitting ? 'Saving...' : 'Save Changes'}
+                {isSubmitting ? 'Opslaan...' : 'Wijzigingen opslaan'}
             </button>
         </div>
     </form>

@@ -23,7 +23,7 @@
 </script>
 
 <button use:backButton class="back-link">
-    <i class="fa-solid fa-arrow-left"></i> Back to Users
+    <i class="fa-solid fa-arrow-left"></i> Terug naar gebruikers
 </button>
 
 <h1>Registraties</h1>

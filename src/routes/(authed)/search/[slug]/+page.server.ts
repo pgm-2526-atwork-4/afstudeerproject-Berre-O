@@ -70,7 +70,7 @@ export const actions: Actions = {
     const information = formData.get("information")?.toString().trim();
 
     if (!information) {
-      return fail(400, { error: "Note content is required" });
+      return fail(400, { error: "Notitie gegevens is verplicht" });
     }
 
     const { data: newNote, error: dbError } = await supabase
@@ -113,7 +113,7 @@ export const actions: Actions = {
       .insert({
         user_id: session?.user?.id,
         client_id: params.slug,
-        action: warning ? "Enabled warning" : "Disabled warning"
+        action: warning ? "Melding aangezet" : "Melding uitgezet"
         });
 
         if (logError) {
@@ -144,7 +144,7 @@ export const actions: Actions = {
       .insert({
         user_id: session?.user?.id,
         client_id: params.slug,
-        action: status ? "Enabled software" : "Disabled software"
+        action: status ? "Software aangezet" : "Software uitgezet"
         });
 
         if (logError) {
