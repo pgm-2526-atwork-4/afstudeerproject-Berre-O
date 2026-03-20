@@ -58,7 +58,7 @@
     {#if data.profile?.admin}
     <a href="/clients/new" class="button button--primary">
         <i class="fa-solid fa-plus"></i>
-        <span class="button__text">Add client</span>
+        <span class="button__text">Klant toevoegen</span>
     </a>
     {/if}
 </header>
@@ -83,18 +83,18 @@
     
                 <li class="list__item list__item--nav" class:active={$page.url.pathname.startsWith("/search")}>
                     <a href="/search" class="link link--nav" data-sveltekit-preload-data onclick={closeMobileMenu}>
-                        <i class="fa-solid fa-magnifying-glass"></i> Search
+                        <i class="fa-solid fa-magnifying-glass"></i> Zoeken
                     </a>
                 </li>
                 {#if data.profile?.admin}
                 <li class="list__item list__item--nav" class:active={$page.url.pathname === "/statistics"}>
-                    <a href="/statistics" class="link link--nav" data-sveltekit-preload-data onclick={closeMobileMenu}><i class="fa-solid fa-chart-line"></i>Statistics</a>
+                    <a href="/statistics" class="link link--nav" data-sveltekit-preload-data onclick={closeMobileMenu}><i class="fa-solid fa-chart-line"></i>Statistieken</a>
                 </li>
                 <li class="list__item list__item--nav" class:active={$page.url.pathname === "/logs"}>
-                    <a href="/logs" class="link link--nav" data-sveltekit-preload-data onclick={closeMobileMenu}><i class="fa-solid fa-clock-rotate-left"></i>Logs</a>
+                    <a href="/logs" class="link link--nav" data-sveltekit-preload-data onclick={closeMobileMenu}><i class="fa-solid fa-clock-rotate-left"></i>Logboek</a>
                 </li>
                 <li class="list__item list__item--nav" class:active={$page.url.pathname.startsWith("/users")}>
-                    <a href="/users" class="link link--nav" data-sveltekit-preload-data onclick={closeMobileMenu}><i class="fa-solid fa-user"></i>Users</a>
+                    <a href="/users" class="link link--nav" data-sveltekit-preload-data onclick={closeMobileMenu}><i class="fa-solid fa-user"></i>Gebruikers</a>
                 </li>
                 {/if}
             </ul>
@@ -102,7 +102,7 @@
 
         <div class="auth">
             {#if data.session}
-                <button onclick={signOut} class="button button--auth"><i class="fa-solid fa-right-from-bracket"></i>Sign Out</button>   
+                <button onclick={signOut} class="button button--auth"><i class="fa-solid fa-right-from-bracket"></i>Uitloggen</button>   
             {/if}
         </div>
     </aside>

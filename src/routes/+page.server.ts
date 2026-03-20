@@ -19,11 +19,11 @@ export const actions: Actions = {
     const name = formData.get("name")?.toString().trim();
 
     if (!email || !password || !name) {
-      return fail(400, { error: "All fields are required" });
+      return fail(400, { error: "Alle velden zijn verplicht" });
     }
 
     if (password !== confirmPassword) {
-      return fail(400, { error: "Passwords do not match" });
+      return fail(400, { error: "Wachtwoorden komen niet overeen" });
     }
 
     const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -62,7 +62,7 @@ export const actions: Actions = {
     const password = formData.get("password")?.toString();
 
     if (!email || !password) {
-      return fail(400, { error: "Email and password are required" });
+      return fail(400, { error: "E-mail en wachtwoord zijn verplicht" });
     }
 
     const { error: authError } = await supabase.auth.signInWithPassword({
