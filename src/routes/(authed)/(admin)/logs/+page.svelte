@@ -23,7 +23,7 @@
 </script>
 
 <div class="logs-header">
-    <h1>Logs</h1>
+    <h1>Logboek</h1>
     
     <div class="filters">
         <div class="search-box">
