@@ -63,17 +63,17 @@ export const actions: Actions = {
       !subscription_status ||
       !subscription_pricing
     ) {
-      return fail(400, { error: "All fields are required" });
+      return fail(400, { error: "Alle velden zijn verplicht" });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return fail(400, { error: "Invalid email format" });
+      return fail(400, { error: "Ongeldige e-mail" });
     }
 
     const price = parseFloat(subscription_pricing);
     if (isNaN(price) || price < 0) {
-      return fail(400, { error: "Invalid price format" });
+      return fail(400, { error: "Ongeldige prijs" });
     }
 
     const { error: clientError } = await supabase
