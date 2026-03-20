@@ -44,27 +44,27 @@ export const actions: Actions = {
     };
 
     if (!name?.trim()) {
-      return fail(400, { error: "Name is required.", data: formData });
+      return fail(400, { error: "Naam is verplicht.", data: formData });
     }
     if (!type) {
-      return fail(400, { error: "Type is required.", data: formData });
+      return fail(400, { error: "Type is verplicht.", data: formData });
     }
     if (!sub_type) {
       return fail(400, {
-        error: "Subscription type is required.",
+        error: "Abonnement type is verplicht.",
         data: formData,
       });
     
     }
     if (!sub_price) {
-      return fail(400, { error: "Price is required.", data: formData });
+      return fail(400, { error: "Prijs is verplicht.", data: formData });
     }
     if (!start_date) {
-      return fail(400, { error: "Start date is required.", data: formData });
+      return fail(400, { error: "Start datum is verplicht", data: formData });
     }
     if (!expiration_date) {
       return fail(400, {
-        error: "Expiration date is required.",
+        error: "Eind datum is verplicht",
         data: formData,
       });
     }

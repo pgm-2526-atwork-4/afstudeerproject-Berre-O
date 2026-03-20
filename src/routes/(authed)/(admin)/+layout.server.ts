@@ -16,7 +16,7 @@ export const load = async ({ locals }) => {
   }
 
   if (profile.admin !== true) {
-    throw error(403, { message: "Not Authorized" });
+    throw error(403, { message: "Not Ge-authoriseert" });
   }
 
   return {

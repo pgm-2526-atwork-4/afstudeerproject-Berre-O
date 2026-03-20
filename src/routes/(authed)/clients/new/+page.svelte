@@ -31,22 +31,22 @@
         
         if (step === 1) {
             if (!formData.name.trim()) {
-                errors.name = 'Name is required';
+                errors.name = 'Naam is verplicht';
             }
             if (!formData.type) {
-                errors.type = 'Type is required';
+                errors.type = 'Type is verplicht';
             }
         }
         
         if (step === 2) {
             if (!formData.sub_type) {
-                errors.sub_type = 'Subscription type is required';
+                errors.sub_type = 'Abonnement type is verplicht';
             }
             if (!formData.start_date) {
-                errors.start_date = 'Start date is required';
+                errors.start_date = 'Start datum is verplicht';
             }
             if (!formData.expiration_date) {
-                errors.expiration_date = 'Expiration date is required';
+                errors.expiration_date = 'Eind datum is verplicht';
             }
         }
 
@@ -57,23 +57,23 @@
         errors = {};
         
         if (!formData.name.trim()) {
-            errors.name = 'Name is required';
+            errors.name = 'Naam is verplicht';
         }
         if (!formData.type) {
-            errors.type = 'Type is required';
+            errors.type = 'Type is verplicht';
         }
         
         if (!formData.sub_type) {
-            errors.sub_type = 'Subscription type is required';
+            errors.sub_type = 'Abonnement type is verplicht';
         }
         if (!formData.sub_price) {
-            errors.sub_price = 'Subscription price is required';
+            errors.sub_price = 'Abonnement prijs is verplicht';
         }
         if (!formData.start_date) {
-            errors.start_date = 'Start date is required';
+            errors.start_date = 'Start datum is verplicht';
         }
         if (!formData.expiration_date) {
-            errors.expiration_date = 'Expiration date is required';
+            errors.expiration_date = 'Eind datum is verplicht';
         }
 
         return Object.keys(errors).length === 0;
@@ -104,9 +104,9 @@
 
 <div class="page-header">
     <button use:backButton class="btn btn--secondary">
-        <i class="fa-solid fa-arrow-left"></i> Back
+        <i class="fa-solid fa-arrow-left"></i> Terug
     </button>
-    <h1>New Client</h1>
+    <h1>Nieuwe klant</h1>
 </div>
 
 {#if form?.error}
@@ -120,17 +120,17 @@
     <div class="step-indicator">
         <div class="step" class:active={currentStep >= 1} class:completed={currentStep > 1}>
             <div class="step__icon">{#if currentStep > 1}<i class="fa-solid fa-check"></i>{:else}1{/if}</div>
-            <span class="step__label">Client & Contact</span>
+            <span class="step__label">Klant & Contact</span>
         </div>
         <div class="step-indicator__line"></div>
         <div class="step" class:active={currentStep >= 2} class:completed={currentStep > 2}>
             <div class="step__icon">{#if currentStep > 2}<i class="fa-solid fa-check"></i>{:else}2{/if}</div>
-            <span class="step__label">Subscription</span>
+            <span class="step__label">Abonnement</span>
         </div>
         <div class="step-indicator__line"></div>
         <div class="step" class:active={currentStep >= 3}>
             <div class="step__icon">3</div>
-            <span class="step__label">Notes</span>
+            <span class="step__label">Opmerkingen</span>
         </div>
     </div>
 
@@ -167,9 +167,9 @@
             <div class="step-content">
                 <div class="form-grid">
                     <div class="form-section">
-                        <h3 class="form-section__title">Client</h3>
+                        <h3 class="form-section__title">Klant</h3>
                         <div class="field" class:field--error={errors.name}>
-                            <label for="name">Name *</label>
+                            <label for="name">Naam *</label>
                             <input type="text" id="name" placeholder="e.g. Restaurant De Tuin" bind:value={formData.name} />
                             {#if errors.name}<span class="field__error">{errors.name}</span>{/if}
                         </div>
@@ -177,7 +177,7 @@
                             <div class="field" class:field--error={errors.type}>
                                 <label for="type">Type *</label>
                                 <select id="type" bind:value={formData.type}>
-                                    <option value="" disabled>Select type</option>
+                                    <option value="" disabled>Selecteer type</option>
                                     <option value="Restaurant">Restaurant</option>
                                     <option value="Café">Café</option>
                                     <option value="Hotel">Hotel</option>
@@ -186,7 +186,7 @@
                                 {#if errors.type}<span class="field__error">{errors.type}</span>{/if}
                             </div>
                             <div class="field">
-                                <label for="company_number">Company #</label>
+                                <label for="company_number">Ondernemings-Nummer</label>
                                 <input type="text" id="company_number" placeholder="e.g. 0123456789" bind:value={formData.company_number} />
                             </div>
                         </div>
@@ -195,26 +195,26 @@
                         <h3 class="form-section__title">Contact</h3>
                         <div class="field-row">
                             <div class="field">
-                                <label for="first_name">First Name</label>
+                                <label for="first_name">Voornaam</label>
                                 <input type="text" id="first_name" placeholder="e.g. Jan" bind:value={formData.first_name} />
                             </div>
                             <div class="field">
-                                <label for="last_name">Last Name</label>
+                                <label for="last_name">Naam</label>
                                 <input type="text" id="last_name" placeholder="e.g. Janssens" bind:value={formData.last_name} />
                             </div>
                         </div>
                         <div class="field-row">
                             <div class="field">
-                                <label for="email">Email</label>
+                                <label for="email">E-mail</label>
                                 <input type="email" id="email" placeholder="e.g. info@restaurant.be" bind:value={formData.email} />
                             </div>
                             <div class="field">
-                                <label for="phone">Phone</label>
+                                <label for="phone">Telefoon</label>
                                 <input type="tel" id="phone" placeholder="e.g. +32 9 123 45 67" bind:value={formData.phone} />
                             </div>
                         </div>
                         <div class="field">
-                            <label for="adres">Address</label>
+                            <label for="adres">Adres</label>
                             <input type="text" id="adres" placeholder="e.g. Kerkstraat 1, 9000 Gent" bind:value={formData.adres} />
                         </div>
                     </div>
@@ -225,40 +225,40 @@
         {#if currentStep === 2}
             <div class="step-content">
                 <div class="form-section form-section--full">
-                    <h3 class="form-section__title">Subscription Details</h3>
+                    <h3 class="form-section__title">Abonnement Details</h3>
                     <div class="field-row">
                         <div class="field" class:field--error={errors.sub_type}>
                             <label for="sub_type">Type *</label>
                             <select id="sub_type" bind:value={formData.sub_type}>
-                                <option value="" disabled>Select type</option>
-                                <option value="Monthly">Monthly</option>
-                                <option value="Yearly">Yearly</option>
+                                <option value="" disabled>Selecteer type</option>
+                                <option value="Monthly">Maandelijks</option>
+                                <option value="Yearly">Jaarlijks</option>
                                 <option value="Trial">Trial</option>
                             </select>
                             {#if errors.sub_type}<span class="field__error">{errors.sub_type}</span>{/if}
                         </div>
                         <div class="field">
-                            <label for="price">Pricing</label>
+                            <label for="price">Prijs</label>
                             <input type="text" id="price" placeholder="e.g. € 150" bind:value={formData.sub_price} />
                             {#if errors.sub_price}<span class="field__error">{errors.sub_price}</span>{/if}
                         </div>
                         <div class="field">
                             <label for="sub_status">Status</label>
                             <select id="sub_status" bind:value={formData.sub_status}>
-                                <option value="Payed">Payed</option>
-                                <option value="Almost up">Almost up</option>
-                                <option value="Off">Off</option>
+                                <option value="Payed">Betaald</option>
+                                <option value="Almost up">Onbetaald</option>
+                                <option value="Off">Uit</option>
                             </select>
                         </div>
                     </div>
                     <div class="field-row">
                         <div class="field" class:field--error={errors.start_date}>
-                            <label for="start_date">Start Date *</label>
+                            <label for="start_date">Start Datum *</label>
                             <input type="date" id="start_date" bind:value={formData.start_date} />
                             {#if errors.start_date}<span class="field__error">{errors.start_date}</span>{/if}
                         </div>
                         <div class="field" class:field--error={errors.expiration_date}>
-                            <label for="expiration_date">Expiration Date *</label>
+                            <label for="expiration_date">Eind Datum *</label>
                             <input type="date" id="expiration_date" bind:value={formData.expiration_date} />
                             {#if errors.expiration_date}<span class="field__error">{errors.expiration_date}</span>{/if}
                         </div>
@@ -270,9 +270,9 @@
         {#if currentStep === 3}
             <div class="step-content">
                 <div class="form-section form-section--full">
-                    <h3 class="form-section__title">Additional Notes</h3>
+                    <h3 class="form-section__title">Opmerkingen</h3>
                     <div class="field">
-                        <textarea id="notes" placeholder="Any additional information about the client..." rows="6" bind:value={formData.notes}></textarea>
+                        <textarea id="notes" placeholder="Bijkomende informatie over klant..." rows="6" bind:value={formData.notes}></textarea>
                     </div>
                 </div>
             </div>
@@ -281,20 +281,20 @@
         <div class="actions">
             {#if currentStep > 1}
                 <button type="button" class="btn btn--secondary" onclick={prevStep}>
-                    <i class="fa-solid fa-chevron-left"></i> Previous
+                    <i class="fa-solid fa-chevron-left"></i> Vorige
                 </button>
             {/if}
             <div class="actions__spacer"></div>
             {#if currentStep < totalSteps}
                 <button type="button" class="btn btn--primary" onclick={nextStep}>
-                    Next <i class="fa-solid fa-chevron-right"></i>
+                    Volgende <i class="fa-solid fa-chevron-right"></i>
                 </button>
             {:else}
                 <button type="submit" class="btn btn--primary" disabled={loading}>
                     {#if loading}
-                        <i class="fa-solid fa-spinner fa-spin"></i> Creating...
+                        <i class="fa-solid fa-spinner fa-spin"></i> Aanmaken...
                     {:else}
-                        <i class="fa-solid fa-plus"></i> Create Client
+                        <i class="fa-solid fa-plus"></i> Klant Aanmaken
                     {/if}
                 </button>
             {/if}
