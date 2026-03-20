@@ -48,6 +48,7 @@ if (address && (client.lat === null || client.lng === null)) {
     } catch (e) {
         console.error('Geocoding failed for address:', address, e);
     }
+}
 
 
     
