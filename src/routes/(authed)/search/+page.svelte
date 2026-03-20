@@ -147,7 +147,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </svelte:head>
 
-<h1>Search</h1>
+<h1>Zoeken</h1>
 
 <div class="search-layout">
     <div class="search-layout__left" class:search-layout__left--map={showMap}>

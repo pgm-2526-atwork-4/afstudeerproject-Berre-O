@@ -26,7 +26,7 @@
     }
 </script>
 
-<h1>Statistics</h1>
+<h1>Statistieken</h1>
 
 <section class="kpi-grid">
     <div class="kpi-card">

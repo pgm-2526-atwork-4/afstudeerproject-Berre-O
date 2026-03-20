@@ -32,7 +32,7 @@
 </script>
 
 {#if data.session}
-    <p>You are signed in. Redirecting...</p>
+    <p>Je bent ingelogd. Doorsturen...</p>
 {:else}
     <div class="login">
         <div class="login__card">
@@ -57,7 +57,7 @@
                         type="text" 
                         name="name"
                         class="login__input" 
-                        placeholder="Full Name" 
+                        placeholder="Naam" 
                         required 
                     />
                 {/if}
@@ -65,14 +65,14 @@
                     type="email" 
                     name="email"
                     class="login__input" 
-                    placeholder="Email" 
+                    placeholder="E-mail" 
                     required 
                 />
                 <input 
                     type="password" 
                     name="password"
                     class="login__input" 
-                    placeholder="Password" 
+                    placeholder="Wachtwoord" 
                     required 
                 />
                 {#if isRegister}
@@ -80,7 +80,7 @@
                         type="password" 
                         name="confirmPassword"
                         class="login__input" 
-                        placeholder="Confirm Password" 
+                        placeholder="Wachtwoord Bevestigen" 
                         required 
                     />
                 {/if}
@@ -91,23 +91,23 @@
                     <p class="login__message">{form.message}</p>
                 {/if}
                 <button class="login__button login__button--primary" type="submit" disabled={loading}>
-                    {loading ? (isRegister ? 'Creating account...' : 'Signing in...') : (isRegister ? 'Create account' : 'Sign in')}
+                    {loading ? (isRegister ? 'Account aanmaken...' : 'In loggen...') : (isRegister ? 'Account aanmaken' : 'Log In')}
                 </button>
             </form>
 
             <p class="login__toggle">
-                {isRegister ? 'Already have an account?' : "Don't have an account?"}
+                {isRegister ? 'Heb je al een account?' : "Heb je nog geen account?"}
                 <button class="login__toggle-btn" type="button" onclick={toggleMode}>
-                    {isRegister ? 'Sign in' : 'Register'}
+                    {isRegister ? 'Log in' : 'Registreren'}
                 </button>
             </p>
 
             <div class="login__divider">
-                <span>or</span>
+                <span>of</span>
             </div>
 
             <button class="login__button login__button--github" onclick={signInWithGitHub}>
-                Sign in with GitHub
+                Log in met GitHub
             </button>
         </div>
     </div>

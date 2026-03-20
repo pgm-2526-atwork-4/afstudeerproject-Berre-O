@@ -35,10 +35,10 @@
     <table class="table">
         <thead class="table__head">
             <tr class="table__row">
-                <th class="table__item table__item--head">User</th>
-                <th class="table__item table__item--head">Role</th>
-                <th class="table__item table__item--head">State</th>
-                <th class="table__item table__item--head">Joined</th>
+                <th class="table__item table__item--head">Gebruiker</th>
+                <th class="table__item table__item--head">Rol</th>
+                <th class="table__item table__item--head">Status</th>
+                <th class="table__item table__item--head">Aangemaakt</th>
             </tr>
         </thead>
         <tbody>
@@ -71,7 +71,7 @@
             {/each}
             {#if data.clients.length === 0}
                 <tr class="table__row">
-                    <td class="table__item table__item--empty" colspan="4">No users found</td>
+                    <td class="table__item table__item--empty" colspan="4">Geen gebruikers gevonden</td>
                 </tr>
             {/if}
         </tbody>
@@ -90,7 +90,7 @@
             <div class="user-card__header">
                 <div class="user">
                     <div class="user__avatar">{getInitials(user.name)}</div>
-                    <span class="user__name">{user.name ?? 'Unknown'}</span>
+                    <span class="user__name">{user.name ?? 'Niet-gekend'}</span>
                 </div>
                 <div class="user-card__badges">
                     <span class="badge" class:badge--admin={user.admin} class:badge--user={!user.admin}>
@@ -102,18 +102,18 @@
                 </div>
             </div>
             <div class="user-card__footer">
-                <span class="user-card__label">Joined</span>
+                <span class="user-card__label">Aangemaakt</span>
                 <span class="user-card__date">{formatDate(user.created_at)}</span>
             </div>
         </div>
     {/each}
     {#if data.clients.length === 0}
-        <p class="card-list__empty">No users found</p>
+        <p class="card-list__empty">Geen gebruikers gevonden</p>
     {/if}
 </section>
 
 <div class="btn__wrapper">
-    <a href="/users/applications" class="btn btn--primary">Applications</a>
+    <a href="/users/applications" class="btn btn--primary">Aanvragen</a>
 </div>
 
 <style>
