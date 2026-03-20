@@ -130,7 +130,7 @@ export const actions: Actions = {
     const { error: logError } = await supabase.from("logs").insert({
       user_id: session?.user?.id,
       client_id: params.slug,
-      action: "Updated client information",
+      action: "Klant gegevens geupdate",
     });
 
     if (logError) {
