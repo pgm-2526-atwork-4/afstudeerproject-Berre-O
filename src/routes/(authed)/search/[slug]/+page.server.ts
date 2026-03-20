@@ -33,18 +33,21 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 const address = client.contact?.adres as string;
 
 if (address && (client.lat === null || client.lng === null)) {
-    const coords = await geocodeAddress(address);
+    try {
+        const coords = await geocodeAddress(address);
 
-    if (coords) {
-        await locals.supabase.from('Clients').update({
-            lat: coords.lat,
-            lng: coords.lng,
-        }).eq('id', slug);
+        if (coords) {
+            await locals.supabase.from('Clients').update({
+                lat: coords.lat,
+                lng: coords.lng,
+            }).eq('id', slug);
 
-        client.lat = coords.lat;
-        client.lng = coords.lng;
+            client.lat = coords.lat;
+            client.lng = coords.lng;
+        }
+    } catch (e) {
+        console.error('Geocoding failed for address:', address, e);
     }
-}
 
 
     
