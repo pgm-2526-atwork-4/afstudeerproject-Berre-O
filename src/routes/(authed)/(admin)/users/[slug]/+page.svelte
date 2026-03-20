@@ -44,13 +44,13 @@
             <div class="modal__icon modal__icon--danger">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
-            <h2 class="modal__title">Delete User</h2>
+            <h2 class="modal__title">Gebruiker verwijderen</h2>
             <p class="modal__text">
-                Are you sure you want to delete <strong>{data.profile.name}</strong>? 
-                This action cannot be undone.
+                Profiel van <strong>{data.profile.name}</strong> verwijderen? 
+                Deze actie kan niet ongedaan gemaakt worden.
             </p>
             <div class="modal__actions">
-                <button class="btn btn--cancel" onclick={() => showDeleteModal = false}>Cancel</button>
+                <button class="btn btn--cancel" onclick={() => showDeleteModal = false}>Annuleren</button>
                 <form 
                     method="POST" 
                     action="?/deleteUser"
@@ -60,7 +60,7 @@
                             isUpdating = false;
                             if (result.type === 'success') {
                                 showDeleteModal = false;
-                                toastMessage = 'User successfully deleted';
+                                toastMessage = 'Gebruiker succesvol verwijderd';
                                 showToast = true;
                                 
                                 setTimeout(() => {
@@ -72,7 +72,7 @@
                     }}
                 >
                     <button type="submit" class="btn btn--danger" disabled={isUpdating}>
-                        {isUpdating ? 'Deleting...' : 'Delete User'}
+                        {isUpdating ? 'Verwijderen...' : 'Gebruiker verwijderen'}
                     </button>
                 </form>
             </div>
@@ -88,55 +88,55 @@
 {/if}
 
 <button use:backButton class="back-link">
-    <i class="fa-solid fa-arrow-left"></i> Back to Users
+    <i class="fa-solid fa-arrow-left"></i> Terug naar gebruikers
 </button>
 
 <section class="detail-header">
     <div class="detail-header__avatar">{getInitials(data.profile.name)}</div>
     <div class="detail-header__info">
         <h1 class="detail-header__name">
-            {data.profile.name ?? 'Unknown User'}
+            {data.profile.name ?? 'Onbekende gebruiker'}
             <span class="badge" class:badge--admin={isAdmin} class:badge--user={!isAdmin}>
-                {isAdmin ? 'Admin' : 'User'}
+                {isAdmin ? 'Admin' : 'Gebruiker'}
             </span>
         </h1>
-        <p class="detail-header__sub">Member since {formatDate(data.profile.created_at)}</p>
+        <p class="detail-header__sub">Lid sinds {formatDate(data.profile.created_at)}</p>
     </div>
     <div class="detail-header__actions">
         <button class="btn btn--danger-outline" onclick={() => showDeleteModal = true}>
-            <i class="fa-solid fa-trash"></i> Delete
+            <i class="fa-solid fa-trash"></i> Verwijder
         </button>
     </div>
 </section>
 
 <div class="detail-content">
     <div class="detail-card">
-        <h2 class="detail-card__title">User Information</h2>
+        <h2 class="detail-card__title">Gebruiker informatie</h2>
         <div class="detail-card__grid">
             <div class="detail-card__field">
-                <span class="detail-card__label">Full Name</span>
-                <span class="detail-card__value">{data.profile.name ?? 'Not set'}</span>
+                <span class="detail-card__label">Volledige Naam</span>
+                <span class="detail-card__value">{data.profile.name ?? 'Niet ingesteld'}</span>
             </div>
             <div class="detail-card__field">
-                <span class="detail-card__label">User ID</span>
+                <span class="detail-card__label">Gebruiker ID</span>
                 <span class="detail-card__value">{data.profile.id}</span>
             </div>
             <div class="detail-card__field">
-                <span class="detail-card__label">Created At</span>
+                <span class="detail-card__label">Gemaakt op</span>
                 <span class="detail-card__value">{formatDateTime(data.profile.created_at)}</span>
             </div>
         </div>
     </div>
 
     <div class="detail-card">
-        <h2 class="detail-card__title">Permissions</h2>
+        <h2 class="detail-card__title">Bevoegdheden</h2>
         <div class="control">
             <div class="control__item">
                 <div class="control__info">
                     <i class="fa-solid fa-shield-halved"></i>
                     <div>
                         <span class="control__label">Administrator</span>
-                        <span class="control__desc">Grant full access to all features</span>
+                        <span class="control__desc">Toegang geven tot alle functies</span>
                     </div>
                 </div>
                 <form 
