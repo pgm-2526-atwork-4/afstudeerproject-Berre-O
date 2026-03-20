@@ -52,6 +52,15 @@
     function cancelSoftwareChange() {
         showConfirmModal = false;
     }
+
+    function formatStatus(status: string): string {
+    switch (status) {
+        case 'Payed': return 'Betaald';
+        case 'Almost up': return 'Bijna verlopen';
+        case 'Off': return 'Uitgeschakeld';
+        default: return status;
+    }
+}
 </script>
 
 {#if showDeleteModal}
@@ -60,12 +69,12 @@
             <div class="modal__icon modal__icon--danger">
                 <i class="fa-solid fa-trash-can"></i>
             </div>
-            <h2 class="modal__title">Delete Client</h2>
+            <h2 class="modal__title">Klant verwijderen</h2>
             <p class="modal__text">
-                Are you sure you want to delete <strong>{data.client.name}</strong>? This action cannot be undone.
+                Bent u zeker dat u <strong>{data.client.name}</strong> wilt verwijderen? Deze actie kan niet ongedaan gemaakt worden.
             </p>
             <div class="modal__actions">
-                <button class="btn btn--cancel" onclick={() => (showDeleteModal = false)}>Cancel</button>
+                <button class="btn btn--cancel" onclick={() => (showDeleteModal = false)}>Annuleren</button>
                 <form
                     method="POST"
                     action="?/deleteClient"
@@ -74,7 +83,7 @@
                         return async ({ result }) => {
                             if (result.type === 'success') {
                                 showDeleteModal = false;
-                                toastMessage = 'Client successfully deleted';
+                                toastMessage = 'Klant succesvol verwijderd';
                                 showToast = true;
                                 setTimeout(() => { showToast = false; goto('/search'); }, 3000);
                             }
@@ -84,7 +93,7 @@
                     }}
                 >
                     <button type="submit" class="btn btn--danger" disabled={isDeleting}>
-                        {isDeleting ? 'Deleting...' : 'Delete'}
+                        {isDeleting ? 'Verwijderen...' : 'Verwijder'}
                     </button>
                 </form>
             </div>
@@ -147,7 +156,7 @@
                 class:badge--active={data.client.subscriptions?.status === 'Payed'}
                 class:badge--renew={data.client.subscriptions?.status === 'Almost up'}
                 class:badge--inactive={data.client.subscriptions?.status === 'Off'}
-            >{data.client.subscriptions?.status}</span>
+            >{formatStatus(data.client.subscriptions?.status)}</span>
             <span
                 class="badge"
                 class:badge--active={disableToggle}
@@ -158,27 +167,27 @@
     </div>
     <div class="detail-header__actions">
         <a href={`${data.client.id}/edit`} class="btn btn--outline">
-            <i class="fa-solid fa-pen-to-square"></i> Edit
+            <i class="fa-solid fa-pen-to-square"></i> Bewerken
         </a>
         <button class="btn btn--danger-outline" onclick={() => (showDeleteModal = true)}>
-            <i class="fa-solid fa-trash-can"></i> Delete
+            <i class="fa-solid fa-trash-can"></i> Verwijderen
         </button>
     </div>
 </section>
 
 <nav class="tabs">
-    <button class="tabs__item" class:tabs__item--active={activeTab === 'overview'} onclick={() => (activeTab = 'overview')}>Overview</button>
-    <button class="tabs__item" class:tabs__item--active={activeTab === 'systems'} onclick={() => (activeTab = 'systems')}>Systems</button>
-    <button class="tabs__item" class:tabs__item--active={activeTab === 'notes'} onclick={() => (activeTab = 'notes')}>Notes</button>
+    <button class="tabs__item" class:tabs__item--active={activeTab === 'overview'} onclick={() => (activeTab = 'overview')}>Overzicht</button>
+    <button class="tabs__item" class:tabs__item--active={activeTab === 'systems'} onclick={() => (activeTab = 'systems')}>Systemen</button>
+    <button class="tabs__item" class:tabs__item--active={activeTab === 'notes'} onclick={() => (activeTab = 'notes')}>Opmerkingen</button>
 </nav>
 
 {#if activeTab === 'overview'}
     <div class="detail-content">
         <div class="detail-card">
-            <h2 class="detail-card__title">Contact Information</h2>
+            <h2 class="detail-card__title">Contact Informatie</h2>
             <div class="detail-card__grid">
                 <div class="detail-card__field">
-                    <span class="detail-card__label">Email</span>
+                    <span class="detail-card__label">E-mail</span>
                     <span class="detail-card__value">{data.client.contact.email}</span>
                 </div>
                 <div class="detail-card__field">
@@ -190,17 +199,17 @@
                     <span class="detail-card__value">{data.client.contact.phone}</span>
                 </div>
                 <div class="detail-card__field">
-                    <span class="detail-card__label">KVK</span>
+                    <span class="detail-card__label">Ondernemings-Nummer</span>
                     <span class="detail-card__value">{data.client.company_number}</span>
                 </div>
             </div>
         </div>
 
         <div class="detail-card">
-            <h2 class="detail-card__title">Account Information</h2>
+            <h2 class="detail-card__title">Account Informatie</h2>
             <div class="detail-card__grid">
                 <div class="detail-card__field">
-                    <span class="detail-card__label">Subscription Type</span>
+                    <span class="detail-card__label">Abonnement Type</span>
                     <span class="detail-card__value detail-card__value--highlight">{data.client.subscriptions.type}</span>
                 </div>
                 <div class="detail-card__field">
@@ -208,7 +217,7 @@
                     <span class="detail-card__value detail-card__value--green">{data.client.subscriptions.status}</span>
                 </div>
                 <div class="detail-card__field">
-                    <span class="detail-card__label">Subscription Price</span>
+                    <span class="detail-card__label">Abonnement Prijs</span>
                     <span class="detail-card__value detail-card__value--highlight">€ {data.client.subscriptions.pricing}</span>
                 </div>
             </div>
@@ -219,7 +228,7 @@
 {#if activeTab === 'notes'}
     <div class="detail-content detail-content--single">
         <div class="detail-card detail-card--full">
-            <h2 class="detail-card__title">Notes</h2>
+            <h2 class="detail-card__title">Opmerkingen</h2>
             {#if notes.length === 0}
                 <p class="no-notes">Nog geen notities voor deze klant.</p>
             {:else}
@@ -250,12 +259,12 @@
                 <textarea
                     name="information"
                     class="note-input__field"
-                    placeholder="Add a note..."
+                    placeholder="Voeg een notitie toe..."
                     bind:value={noteInput}
                     rows="3"
                 ></textarea>
                 <button type="submit" class="btn btn--save" disabled={isSavingNote || !noteInput.trim()}>
-                    {isSavingNote ? 'Opslaan...' : 'Save Note'}
+                    {isSavingNote ? 'Opslaan...' : 'Opslaan'}
                 </button>
             </form>
         </div>
@@ -265,11 +274,11 @@
 {#if activeTab === 'systems'}
     <div class="detail-content detail-content--single">
         <div class="detail-card detail-card--full">
-            <h2 class="detail-card__title">Software Control</h2>
+            <h2 class="detail-card__title">Software Bediening</h2>
             <div class="control">
                 <div class="control__item">
                     <i class="fa-solid fa-triangle-exclamation"></i>
-                    <span>Warning</span>
+                    <span>Melding</span>
                     <form
                         method="POST"
                         action="?/updateWarning"
