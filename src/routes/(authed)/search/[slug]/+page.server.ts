@@ -30,13 +30,21 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     throw error(404, "Client not found");
   }
 
-    const address = client.contact?.adres as string;
+const address = client.contact?.adres as string;
+
+if (address && (client.lat === null || client.lng === null)) {
     const coords = await geocodeAddress(address);
 
-    await locals.supabase.from('Clients').update({
-        lat: coords?.lat ?? null,
-        lng: coords?.lng ?? null,
-    }).eq('id', slug);
+    if (coords) {
+        await locals.supabase.from('Clients').update({
+            lat: coords.lat,
+            lng: coords.lng,
+        }).eq('id', slug);
+
+        client.lat = coords.lat;
+        client.lng = coords.lng;
+    }
+}
 
 
     
